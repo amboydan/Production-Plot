@@ -1,0 +1,14 @@
+<!-- header.component.html -->
+<mat-toolbar color="primary">
+  <span>Production Tools</span>
+  <span class="spacer"></span> <!-- Pushes elements to the right -->
+  <!-- <button mat-button routerLink="">Home</button>
+  <button mat-button routerLink="">About</button>
+  <button mat-icon-button [matMenuTriggerFor]="userMenu">
+    <mat-icon>account_circle</mat-icon>
+  </button> -->
+  <mat-menu #userMenu="matMenu">
+    <!-- <button mat-menu-item>Profile</button>
+    <button mat-menu-item>Settings</button> -->
+  </mat-menu>
+</mat-toolbar>
