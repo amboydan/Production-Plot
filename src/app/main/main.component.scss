@@ -1,39 +1,52 @@
-/* Style the entire sidenav list */
-::ng-deep .main-sidenav a.mat-list-item {
-  background-color: #f5f5f5;  /* default background */
+:host ::ng-deep .main-sidenav .mat-mdc-list-item {
+  background-color: #f5f5f5;
   margin: 4px 0;
   border-radius: 4px;
   transition: background-color 0.2s, color 0.2s;
   text-decoration: none;
 }
 
+:host ::ng-deep .main-team-select {
+  //background-color: #f5f5f5;
+  width: 100%;
+  margin: 4px 0;
+  border-radius: 1px;
+  transition: background-color 0.2s, color 0.2s;
+  text-decoration: none;
+}
+
 /* Hover effect */
-::ng-deep .main-sidenav a.mat-list-item:hover {
-  background-color: #e0e0e0;
+:host ::ng-deep .main-sidenav .mat-mdc-list-item:hover {
+  background-color: #3ecc13;
 }
 
 /* Default text color */
-::ng-deep .main-sidenav a.mat-list-item .list-text {
-  color: #d60f0f;
+:host ::ng-deep .main-sidenav .mat-mdc-list-item .mat-mdc-list-item-title,
+:host ::ng-deep .main-sidenav .mat-mdc-list-item .list-text {
+  color: #000000;
 }
 
-/* Active link styles */
-::ng-deep .main-sidenav a.mat-list-item.active-link {
+/* Active link background */
+:host ::ng-deep .main-sidenav a.active-link.mat-mdc-list-item {
   background-color: #3f51b5;
+}
+:host ::ng-deep .tool a.active-link.mat-mdc-list-item {
+  background-color: #3efa05;
 }
 
 /* Active link text color */
-::ng-deep .main-sidenav a.mat-list-item.active-link .list-text {
-  color: white !important;
+:host ::ng-deep .main-sidenav a.active-link.mat-mdc-list-item .mat-mdc-list-item-title,
+:host ::ng-deep .main-sidenav a.active-link.mat-mdc-list-item .list-text {
+  color: rgb(12, 12, 12) !important;
 }
 
-/* Layout helpers */
+/* Layout */
 .app-container {
   height: 100vh;
 }
 
 .app-sidenav {
-  width: 240px;
+  width: 220px;
 }
 
 .app-content {

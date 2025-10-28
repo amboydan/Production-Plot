@@ -9,7 +9,7 @@ export const routes: Routes = [
     children: [
       { path: 'fieldProduction', component: ContentComponent },
       { path: 'dirSurveys', component: ContentComponent },
-      { path: 'wellConstruction', component: ContentComponent }
+      { path: 'wellConstruction', component: ContentComponent },
     ]
   }
 ];
