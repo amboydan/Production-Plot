@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, retry } from 'rxjs';
+import { 
+  Observable, 
+  retry 
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +20,21 @@ export class HakConnectionsService {
       );
   }
 
-  getFieldList(): Observable<any> {
-    const url = `http://localhost:3000/fields`
+  getTeamList(): Observable<any> {
+    // const url = `http://localhost:3000/teams`
+    const url = `http://localhost:3000/teams`
+    return this.getJson(url);
+  }
+
+  getTeamStats(selectedTeam: string): Observable<any> {
+    const url = `http://localhost:3000/team/statistics/${encodeURIComponent(selectedTeam)}`
+    return this.getJson(url);
+  }
+
+  getFieldsList(selectedTeam: string): Observable<any> {
+    // const url = `http://localhost:3000/teams`
+    const url = `http://localhost:3000/team/fields/${encodeURIComponent(selectedTeam)}`
     return this.getJson(url);
   }
 }
+

@@ -3,14 +3,25 @@
   <mat-sidenav mode="side" opened class="app-sidenav">
     <mat-form-field class="main-team-select">
       <mat-label>Asset Team</mat-label>
-      <mat-select  [(ngModel)]="selectedValue" name="food">
+      <mat-select  [(ngModel)]="selectedTeam" name="team" (selectionChange)="onTeamSelect($event.value)">
         @for (team of teams; track team) {
-          <mat-option [value]="team.value">{{team.viewValue}}</mat-option>
+          <mat-option [value]="team.asset_team_nm">{{team.asset_team_nm}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="main-field-select" *ngIf="selectedTeam">
+      <mat-label>Field</mat-label>
+      <mat-select  [(ngModel)]="selectedField" name="team">
+        @for (field of fields; track field) {
+          <mat-option [value]="field.field_nm">{{field.field_nm}}</mat-option>
         }
       </mat-select>
     </mat-form-field>
     <mat-nav-list class="main-sidenav tool">
-      <a mat-list-item routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <a mat-list-item [routerLink]="['/teamOverview', selectedTeam]" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="list-text">Team Overview</span>
+      </a>
+      <a mat-list-item routerLink="/wellProduction" routerLinkActive="active-link">
         <span class="list-text">Well Production</span>
       </a>
       <a mat-list-item routerLink="/fieldProduction" routerLinkActive="active-link">

@@ -1,0 +1,16 @@
+<div class="team-cards-container">
+  <mat-card *ngFor="let stat of stats" class="team-card">
+    <mat-card-header>
+      <mat-card-title>{{ stat.field_nm }}</mat-card-title>
+      <mat-card-subtitle>{{ stat.field_nm }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>Members: {{ stat.field_nm }}</p>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button>View</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

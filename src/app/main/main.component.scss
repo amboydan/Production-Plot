@@ -8,6 +8,20 @@
 
 :host ::ng-deep .main-team-select {
   //background-color: #f5f5f5;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis !important;
+  width: 100%;
+  margin: 4px 0;
+  border-radius: 1px;
+  transition: background-color 0.2s, color 0.2s;
+  text-decoration: none;
+}
+:host ::ng-deep .main-field-select {
+  //background-color: #f5f5f5;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis !important;
   width: 100%;
   margin: 4px 0;
   border-radius: 1px;
@@ -46,7 +60,7 @@
 }
 
 .app-sidenav {
-  width: 220px;
+  width: 280px;
 }
 
 .app-content {
@@ -61,3 +75,4 @@
   background: #fafafa;
   overflow: auto;
 }
+

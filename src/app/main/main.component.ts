@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
  import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { 
+  Router,
   RouterOutlet,
   RouterLink,
   RouterLinkActive 
@@ -13,11 +14,8 @@ import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
-
-interface Team {
-  value: string;
-  viewValue: string;
-}
+import { HakConnectionsService } from '../hak-connections.service';
+import { AppStateService } from '../app-state.service';
 
 @Component({
   selector: 'app-main',
@@ -30,7 +28,7 @@ interface Team {
     MatFormFieldModule,
     MatSidenavModule, 
     MatToolbarModule, 
-    MatListModule, 
+    MatListModule,
     RouterOutlet, 
     HeaderComponent, 
     RouterLink, 
@@ -41,19 +39,61 @@ interface Team {
 })
 export class MainComponent implements OnInit {
 
+  teams: any[] = [];
+  fields: any[] = [];
+  loading: boolean = false;
+  errorMessage: string | null = null;
+
+  constructor(
+    private hakConnectionsService: HakConnectionsService,
+    private router: Router,
+    private appState: AppStateService
+  ) {}
+
   ngOnInit(): void {
-    
+    this.loadTeams();
   }
 
-  selectedValue: string | undefined;
-  teams: Team[] = [
-    {value: 'PBU', viewValue: 'Prudhoe Bay'},
-    {value: 'WNS', viewValue: 'Western North Slope'},
-    {value: 'MPU', viewValue: 'Milne Point Unit'},
-    {value: 'AKI', viewValue: 'AK Islands'},
-    {value: 'KEN', viewValue: 'Kenai'},
-    {value: 'CIO', viewValue: 'Cook Inlet Offshore'}
-  ];
+  onTeamSelect(selectedTeam: string) {
+    if (selectedTeam) {
+      this.appState.setSelectedTeam(selectedTeam);
+      this.router.navigate(['/teamOverview', selectedTeam]);
+      this.loadFields(selectedTeam);
+    }
+  }
+
+  selectedTeam: string | undefined;
+  loadTeams(): void {
+    this.loading = true;  // Set loading to true while the data is being fetched
+    this.hakConnectionsService.getTeamList()
+      .subscribe({
+        next: (data) => {
+          this.teams = data;  // Assign the data to the fields variable
+          this.loading = false;  // Set loading to false after receiving the data
+        },
+        error: (error) => {
+          this.errorMessage = 'Failed to load data';  // Set an error message if there's an issue
+          this.loading = false;  // Set loading to false if there's an error
+        }
+      });
+  }
+
+  selectedField: string | undefined
+  loadFields(selectedTeam: string): void {
+    this.loading = true;  // Set loading to true while the data is being fetched
+    this.hakConnectionsService.getFieldsList(selectedTeam)
+      .subscribe({
+        next: (data) => {
+          this.fields = data;  // Assign the data to the fields variable
+          this.loading = false;  // Set loading to false after receiving the data
+        },
+        error: (error) => {
+          this.errorMessage = 'Failed to load data';  // Set an error message if there's an issue
+          this.loading = false;  // Set loading to false if there's an error
+        }
+      });
+  }
+  
 
 }
 
