@@ -13,8 +13,10 @@ export class AppStateService {
 
   setSelectedTeam(team: string | null) {
     this.selectedTeamSource.next(team);
+    // Reset field when team changes
+    if (team === null) this.setSelectedField(null);
   }
-  
+
   setSelectedField(field: string | null) {
     this.selectedFieldSource.next(field);
   }
@@ -22,17 +24,8 @@ export class AppStateService {
   get currentTeam(): string | null {
     return this.selectedTeamSource.value;
   }
-  
+
   get currentField(): string | null {
     return this.selectedFieldSource.value;
   }
-
-  private activeLinkSubject = new BehaviorSubject<string>('');
-  activeLink$ = this.activeLinkSubject.asObservable();
-
-  setActiveLink(link: string) {
-    console.log(this)
-    this.activeLinkSubject.next(link);
-  }
-
 }

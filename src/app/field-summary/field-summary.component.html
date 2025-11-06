@@ -1,16 +1,16 @@
-<mat-toolbar  style="font-size: 30px;" @slideInFromLeft>
-  <span>{{ selectedField }}</span>
-  <span class="toolbar-width"></span>
-  <span class="spacer"></span> <!-- Pushes elements to the right -->
-  <mat-button-toggle-group [(ngModel)]="selectedDateRange">
-  <mat-button-toggle
-    *ngFor="let filter of filters"
-    [value]="filter"
-    class="filter-toggle"
-  >
-    <mat-icon *ngIf="selectedDateRange === filter"></mat-icon>
-    {{ filter }}
-  </mat-button-toggle>
-</mat-button-toggle-group>
+<mat-toolbar>
+  <span>{{ appState.selectedField$ | async }}</span>
+  <span class="spacer"></span>
+  <mat-button-toggle-group>
+    <mat-button-toggle *ngFor="let filter of filters" [value]="filter" (click)="toggleSelection(filter)">
+      {{ filter }}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 </mat-toolbar>
 
+<!-- Example of clickable field cards -->
+<div class="field-cards">
+  <div *ngFor="let field of ['FieldA','FieldB','FieldC']" (click)="selectField(field)">
+    {{ field }}
+  </div>
+</div>

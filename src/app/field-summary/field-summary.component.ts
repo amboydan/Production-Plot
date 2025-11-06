@@ -1,65 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { Component } from '@angular/core';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { AppStateService } from '../app-state.service';
-import { FormsModule } from '@angular/forms';
-import { HakConnectionsService } from '../hak-connections.service';
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations'
 
 @Component({
   selector: 'app-field-summary',
-  imports: [
-    CommonModule,
-    MatButtonToggleModule,
-    MatIconModule,
-    MatToolbarModule,
-    FormsModule
-  ],
-  templateUrl: './field-summary.component.html',
-  styleUrl: './field-summary.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
-  animations: [
-    trigger('slideInFromLeft', [
-          state('void', style({ transform: 'translateX(-100%)', opacity: 0 })), // Initial state (hidden left)
-          state('*', style({ transform: 'translateX(0)', opacity: 1 })), // Final state (visible)
-          transition('void => *', [ // Transition from hidden to visible
-            animate('500ms ease-out') // Animation duration and easing
-          ]),
-          transition('* => void', [ // Optional: transition for when it leaves
-            animate('300ms ease-in', style({ transform: 'translateX(-100%)', opacity: 0 }))
-          ])
-        ])
-  ]
+  standalone: true,
+  imports: [CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule, AsyncPipe],
+  templateUrl: './field-summary.component.html'
 })
-export class FieldSummaryComponent implements OnInit {
-
-  selectedField: string | null = null;
-  selectedDateRange: string | null = null;
-  loading: boolean = false;
-  errorMessage: string | null = null;
+export class FieldSummaryComponent {
 
   filters = ['Week', 'Month', 'Year', 'All Time'];
   selectedFilters: string[] = [];
 
-  constructor(
-      private hakConnectionsService: HakConnectionsService,
-      private appState: AppStateService
-  ) {}
-
-  ngOnInit(): void {
-      this.appState.selectedField$.subscribe(field => {
-        this.selectedField = field;
-      });
-  }
+  constructor(public appState: AppStateService) {}
 
   toggleSelection(value: string) {
     if (this.selectedFilters.includes(value)) {
@@ -69,8 +26,7 @@ export class FieldSummaryComponent implements OnInit {
     }
   }
 
-  isSelected(value: string): boolean {
-    return this.selectedFilters.includes(value);
+  selectField(field: string) {
+    this.appState.setSelectedField(field);
   }
-
 }

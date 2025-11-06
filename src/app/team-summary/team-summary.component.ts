@@ -1,23 +1,11 @@
-import { 
-  Component, 
-  OnChanges, 
-  OnInit, 
-  SimpleChanges
-} from '@angular/core';
-import { HakConnectionsService } from '../hak-connections.service';
-import { AppStateService } from '../app-state.service';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
-import { ViewEncapsulation } from '@angular/core';
-import { 
-  trigger, 
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
-import { Router, RouterLink } from "@angular/router";
+import { Router, RouterLink } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { HakConnectionsService } from '../hak-connections.service';
+import { AppStateService } from '../app-state.service';
 
 @Component({
   selector: 'app-team-summary',
@@ -27,22 +15,18 @@ import { Router, RouterLink } from "@angular/router";
     MatCardModule,
     CommonModule,
     RouterLink
-],
+  ],
   templateUrl: './team-summary.component.html',
   styleUrls: ['./team-summary.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('fadeIn', [
-      state('void', style(
-        { opacity: 0, transform: 'translate(-50px, -20px)' }
-      )),
+      state('void', style({ opacity: 0, transform: 'translate(-50px, -20px)' })),
       transition(':enter', [
         animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
       ])
     ])
   ]
 })
-
 export class TeamSummaryComponent implements OnInit {
 
   selectedTeam: string | null = null;
@@ -57,6 +41,7 @@ export class TeamSummaryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Subscribe to selected team from the app state service
     this.appState.selectedTeam$.subscribe(team => {
       this.selectedTeam = team;
       this.loadTeamStatistics();
@@ -64,41 +49,42 @@ export class TeamSummaryComponent implements OnInit {
   }
 
   loadTeamStatistics(): void {
-    if (!this.selectedTeam) {
-      console.warn('No team selected yet');
-      return;
-    }
+    if (!this.selectedTeam) return;
 
     this.loading = true;
     this.errorMessage = null;
 
-    this.hakConnectionsService.getTeamStats(this.selectedTeam)
-      .subscribe({
-        next: (data) => {
-          this.stats = data || [];
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error(error);
-          this.errorMessage = 'Failed to load team stats.';
-          this.loading = false;
-        }
-      });
+    this.hakConnectionsService.getTeamStats(this.selectedTeam).subscribe({
+      next: (data) => {
+        this.stats = data || [];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to load team stats.';
+        this.loading = false;
+      }
+    });
   }
 
   isSumZero(obj: { [key: string]: number }): boolean {
-    const sum = Object.values(obj).reduce((acc, currentVal) => acc + currentVal, 0);
-    return sum === 0;
+    return Object.values(obj).reduce((sum, val) => sum + val, 0) === 0;
   }
 
+  /**
+   * Navigate to a field overview and update sidebar state
+   */
   goToField(stat: any) {
-    this.appState.setSelectedField(stat.field_nm)
-    this.router.navigate(['/fieldOverview', stat.field_nm])
-  }
+    if (!stat?.field_nm) return;
 
-  goToFieldOverview(field: string) {
-    this.appState.setActiveLink('fieldOverview'); // key for the sidebar
-    this.router.navigate(['/fieldOverview', field]);
-  } 
+    // Update the selected field in the shared service
+    this.appState.setSelectedField(stat.field_nm);
+
+    // Optionally, mark the sidebar active link
+    //this.appState.setActiveLink('fieldOverview');
+
+    // Navigate to the field overview page
+    this.router.navigate(['/fieldOverview', stat.field_nm]);
+  }
 
 }

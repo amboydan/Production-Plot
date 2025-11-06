@@ -1,22 +1,17 @@
 import { Component, OnInit } from '@angular/core';
- import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
-import { 
-  Router,
-  RouterOutlet,
-  RouterLink,
-  RouterLinkActive 
-} from '@angular/router';
-import { HeaderComponent } from "../header/header.component";
-import {FormsModule} from '@angular/forms';
-import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { HakConnectionsService } from '../hak-connections.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { HeaderComponent } from '../header/header.component';
 import { AppStateService } from '../app-state.service';
-import { ChangeDetectorRef } from '@angular/core';
+import { HakConnectionsService } from '../hak-connections.service';
+import { AsyncPipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-main',
@@ -24,16 +19,17 @@ import { ChangeDetectorRef } from '@angular/core';
   imports: [
     CommonModule,
     FormsModule,
-    MatInputModule,
+    //MatInputModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatSidenavModule, 
-    MatToolbarModule, 
+    MatSidenavModule,
+    MatToolbarModule,
     MatListModule,
-    RouterOutlet, 
-    HeaderComponent, 
-    RouterLink, 
-    RouterLinkActive
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    HeaderComponent,
+    AsyncPipe
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
@@ -42,75 +38,55 @@ export class MainComponent implements OnInit {
 
   teams: any[] = [];
   fields: any[] = [];
-  loading: boolean = false;
+  loading = false;
   errorMessage: string | null = null;
 
   constructor(
     private hakConnectionsService: HakConnectionsService,
-    private router: Router,
-    private appState: AppStateService,
-    private cd: ChangeDetectorRef
+    public appState: AppStateService, // make public to use async pipe
+    private router: Router
   ) {}
 
-   ngOnInit(): void {
+  ngOnInit() {
     this.loadTeams();
-    this.appState.selectedField$.subscribe(field => this.selectedField = field ?? undefined);
-    this.appState.selectedTeam$.subscribe(team => this.selectedTeam = team ?? undefined);
-  //   this.appState.selectedField$.subscribe(field => {
-  //   this.selectedField = field ?? undefined;
-  //   console.log('Sidebar selected field:', field);
-  // });
   }
 
-  onTeamSelect(selectedTeam: string) {
-    if (selectedTeam) {
-      this.selectedField = ''
-      this.appState.setSelectedTeam(selectedTeam);
-      this.router.navigate(['/teamOverview', selectedTeam]);
-      this.loadFields(selectedTeam);
-    }
-  }
-  
-
-  onFieldSelect(selectedField: string) {
-    if (selectedField) {
-      this.appState.setSelectedField(selectedField);
-      this.router.navigate(['/fieldOverview', selectedField]);
-    }
+  loadTeams() {
+    this.loading = true;
+    this.hakConnectionsService.getTeamList().subscribe({
+      next: data => {
+        this.teams = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load teams';
+        this.loading = false;
+      }
+    });
   }
 
-  selectedTeam: string | undefined;
-  loadTeams(): void {
-    this.loading = true;  // Set loading to true while the data is being fetched
-    this.hakConnectionsService.getTeamList()
-      .subscribe({
-        next: (data) => {
-          this.teams = data;  // Assign the data to the fields variable
-          this.loading = false;  // Set loading to false after receiving the data
-        },
-        error: (error) => {
-          this.errorMessage = 'Failed to load data';  // Set an error message if there's an issue
-          this.loading = false;  // Set loading to false if there's an error
-        }
-      });
+  loadFields(team: string) {
+    this.loading = true;
+    this.hakConnectionsService.getFieldsList(team).subscribe({
+      next: data => {
+        this.fields = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load fields';
+        this.loading = false;
+      }
+    });
   }
 
-  selectedField: string | undefined
-  loadFields(selectedTeam: string): void {
-    this.loading = true;  // Set loading to true while the data is being fetched
-    this.hakConnectionsService.getFieldsList(selectedTeam)
-      .subscribe({
-        next: (data) => {
-          this.fields = data;  // Assign the data to the fields variable
-          this.loading = false;  // Set loading to false after receiving the data
-        },
-        error: (error) => {
-          this.errorMessage = 'Failed to load data';  // Set an error message if there's an issue
-          this.loading = false;  // Set loading to false if there's an error
-        }
-      });
+  onTeamSelect(team: string) {
+    this.appState.setSelectedTeam(team);
+    this.loadFields(team);
+    this.router.navigate(['/teamOverview', team]);
   }
-  
 
+  onFieldSelect(field: string) {
+    this.appState.setSelectedField(field);
+    this.router.navigate(['/fieldOverview', field]);
+  }
 }
-
