@@ -2,37 +2,39 @@
 <mat-sidenav-container class="app-container">
   <mat-sidenav mode="side" opened class="app-sidenav">
     <mat-form-field class="main-team-select">
-      <mat-label>Asset Team</mat-label>
-      <mat-select  [(ngModel)]="selectedTeam" name="team" (selectionChange)="onTeamSelect($event.value)">
+      <mat-label style="font-size: 22px; font-weight: bold">Asset Team</mat-label>
+      <mat-select  [(ngModel)]="selectedTeam" name="team" (selectionChange)="onTeamSelect($event.value)" style="font-size: 18px;">
         @for (team of teams; track team) {
           <mat-option [value]="team.asset_team_nm">{{team.asset_team_nm}}</mat-option>
         }
       </mat-select>
     </mat-form-field>
     <mat-form-field class="main-field-select" *ngIf="selectedTeam">
-      <mat-label>Field</mat-label>
-      <mat-select  [(ngModel)]="selectedField" name="team">
+      <mat-label style="font-size: 22px; font-weight: bold">Field</mat-label>
+      <mat-select  [(ngModel)]="selectedField" name="field" (selectionChange)="onFieldSelect($event.value)" style="font-size: 18px">
         @for (field of fields; track field) {
           <mat-option [value]="field.field_nm">{{field.field_nm}}</mat-option>
         }
       </mat-select>
     </mat-form-field>
-    <mat-nav-list class="main-sidenav tool">
+    <mat-nav-list class="main-sidenav tool" *ngIf="selectedTeam">
       <a mat-list-item [routerLink]="['/teamOverview', selectedTeam]" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
         <span class="list-text">Team Overview</span>
       </a>
-      <a mat-list-item routerLink="/wellProduction" routerLinkActive="active-link">
-        <span class="list-text">Well Production</span>
-      </a>
-      <a mat-list-item routerLink="/fieldProduction" routerLinkActive="active-link">
-        <span class="list-text">Field Production</span>
-      </a>
-      <a mat-list-item routerLink="/dirSurveys" routerLinkActive="active-link">
-        <span class="list-text">Directional Surveys</span>
-      </a>
-      <a mat-list-item routerLink="/wellConstruction" routerLinkActive="active-link">
-        <span class="list-text">Well Construction</span>
-      </a>
+      <div *ngIf="selectedField">
+        <a mat-list-item [routerLink]="['/fieldOverview', selectedField]" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="list-text">Field Overview</span>
+        </a>
+        <a mat-list-item routerLink="/wellProduction" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="list-text">Well Production</span>
+        </a>
+        <a mat-list-item routerLink="/dirSurveys" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="list-text">Directional Surveys</span>
+        </a>
+        <a mat-list-item routerLink="/wellConstruction" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="list-text">Well Construction</span>
+        </a>
+      </div>
     </mat-nav-list>
   </mat-sidenav>
 

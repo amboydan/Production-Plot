@@ -12,7 +12,7 @@
   overflow: hidden;
   text-overflow: ellipsis !important;
   width: 100%;
-  margin: 4px 0;
+  margin: 20px 0;
   border-radius: 1px;
   transition: background-color 0.2s, color 0.2s;
   text-decoration: none;
@@ -38,6 +38,7 @@
 :host ::ng-deep .main-sidenav .mat-mdc-list-item .mat-mdc-list-item-title,
 :host ::ng-deep .main-sidenav .mat-mdc-list-item .list-text {
   color: #000000;
+  font-size: 18px;
 }
 
 /* Active link background */
@@ -61,6 +62,7 @@
 
 .app-sidenav {
   width: 280px;
+  background-color: rgb(66, 144, 233);
 }
 
 .app-content {

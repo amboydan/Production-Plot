@@ -1,16 +1,67 @@
-<div class="team-cards-container">
-  <mat-card *ngFor="let stat of stats" class="team-card">
+<div *ngIf="loading" class="loading-container">
+  <p>Loading team stats...</p>
+</div>
+
+<div *ngIf="!loading && errorMessage" class="error-container">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div *ngIf="!loading && stats.length > 0" class="team-cards-container">
+  <mat-card *ngFor="let stat of stats" class="team-card" @fadeIn (click)="goToFieldOverview(stat.field_nm)" style="cursor: pointer;">
+    <div *ngIf="!isSumZero(stat)">
     <mat-card-header>
-      <mat-card-title>{{ stat.field_nm }}</mat-card-title>
-      <mat-card-subtitle>{{ stat.field_nm }}</mat-card-subtitle>
+      <mat-card-title>
+        <div class="card-title"> {{ stat.field }} </div>
+      </mat-card-title>
+      <!-- <mat-card-subtitle>Value: {{ stat.value }}</mat-card-subtitle> -->
     </mat-card-header>
-
+    <br>
     <mat-card-content>
-      <p>Members: {{ stat.field_nm }}</p>
+        <div *ngIf="stat.gas_wells > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Gas Completion:</div>
+            <div class="value-horizontal">{{ stat.gas_wells }}</div>
+        </div>
+        <div *ngIf="stat.oil_wells > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Oil Completion:</div>
+            <div class="value-horizontal">{{ stat.oil_wells }}</div>
+        </div>
+        <div *ngIf="stat.wtr_inj > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Water Injectors:</div>
+            <div class="value-horizontal">{{ stat.wtr_inj }}</div>
+        </div>
+        <div *ngIf="stat.gas_inj > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Gas Injectors:</div>
+            <div class="value-horizontal">{{ stat.gas_inj }}</div>
+        </div>
+        <div *ngIf="stat.wtrdisposal > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Water Disposal:</div>
+            <div class="value-horizontal">{{ stat.wtrdisposal }}</div>
+        </div>
+        <div *ngIf="stat.drill > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Drilling:</div>
+            <div class="value-horizontal">{{ stat.drill }}</div>
+        </div>
+        <div *ngIf="stat.shutin > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Shut in Completions:</div>
+            <div class="value-horizontal">{{ stat.shutin }}</div>
+        </div>
+        <div *ngIf="stat.tempab > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Temporarily Abandoned:</div>
+            <div class="value-horizontal">{{ stat.tempab }}</div>
+        </div>
+        <div *ngIf="stat.aban > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Abandoned:</div>
+            <div class="value-horizontal">{{ stat.aban }}</div>
+        </div>
+        <div *ngIf="stat.dorm > 0" class="key-value-pair-horizontal">
+            <div class="key-horizontal">Dormant:</div>
+            <div class="value-horizontal">{{ stat.dormant }}</div>
+        </div>
     </mat-card-content>
-
-    <mat-card-actions>
-      <button mat-button>View</button>
-    </mat-card-actions>
+    </div>
   </mat-card>
+</div>
+
+<div *ngIf="!loading && stats.length === 0 && !errorMessage" class="empty-container">
+  <p>No stats available for this team.</p>
 </div>

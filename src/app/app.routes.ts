@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { MainComponent } from './main/main.component';
 import { ContentComponent } from './content/content.component';
 import { TeamSummaryComponent } from './team-summary/team-summary.component';
+import { FieldSummaryComponent } from './field-summary/field-summary.component';
 
 export const routes: Routes = [
   {
@@ -9,7 +10,7 @@ export const routes: Routes = [
     component: MainComponent,
     children: [
       { path: 'teamOverview/:selectedTeam', component: TeamSummaryComponent },
-      { path: 'fieldProduction', component: ContentComponent },
+      { path: 'fieldOverview/:selectedField', component: FieldSummaryComponent },
       { path: 'wellProduction', component: ContentComponent },
       { path: 'dirSurveys', component: ContentComponent },
       { path: 'wellConstruction', component: ContentComponent },

@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
  import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -16,6 +16,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { HakConnectionsService } from '../hak-connections.service';
 import { AppStateService } from '../app-state.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-main',
@@ -47,18 +48,34 @@ export class MainComponent implements OnInit {
   constructor(
     private hakConnectionsService: HakConnectionsService,
     private router: Router,
-    private appState: AppStateService
+    private appState: AppStateService,
+    private cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
+   ngOnInit(): void {
     this.loadTeams();
+    this.appState.selectedField$.subscribe(field => this.selectedField = field ?? undefined);
+    this.appState.selectedTeam$.subscribe(team => this.selectedTeam = team ?? undefined);
+  //   this.appState.selectedField$.subscribe(field => {
+  //   this.selectedField = field ?? undefined;
+  //   console.log('Sidebar selected field:', field);
+  // });
   }
 
   onTeamSelect(selectedTeam: string) {
     if (selectedTeam) {
+      this.selectedField = ''
       this.appState.setSelectedTeam(selectedTeam);
       this.router.navigate(['/teamOverview', selectedTeam]);
       this.loadFields(selectedTeam);
+    }
+  }
+  
+
+  onFieldSelect(selectedField: string) {
+    if (selectedField) {
+      this.appState.setSelectedField(selectedField);
+      this.router.navigate(['/fieldOverview', selectedField]);
     }
   }
 

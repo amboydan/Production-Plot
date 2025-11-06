@@ -1,0 +1,27 @@
+.toolbar-width {
+  flex: 1 1 auto;
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  mat-icon {
+    font-size: 18px;
+    margin-right: 6px;
+  }
+
+  // ✅ Style the active/checked state
+  &.mat-button-toggle-checked {
+    background-color: limegreen !important;
+    color: white !important;
+
+    mat-icon {
+      color: white;
+    }
+  }
+}

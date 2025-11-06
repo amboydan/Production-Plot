@@ -1,13 +1,51 @@
 .team-cards-container {
-  display: flex;          // horizontal layout
-  flex-wrap: wrap;        // allow wrapping to new row
-  gap: 16px;              // space between cards
-  justify-content: flex-start; // align cards to the start
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
 
   .team-card {
-    flex: 1 1 250px;      // grow/shrink, base width 250px
-    max-width: 300px;     // optional max width
-    min-width: 200px;     // optional min width
+    flex: 1 1 250px;
+    max-width: 300px;
+    min-width: 200px;
     box-sizing: border-box;
   }
+}
+
+.card-title {
+    font-size: 25px;
+    font-weight: 500;
+    color: #0717f5;
+}
+
+.loading-container,
+.error-container,
+.empty-container {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.error-container {
+  color: red;
+}
+
+.key-value-pair-horizontal {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.key-horizontal {
+  font-weight: bold;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.8);
+  min-width: 80px; /* Adjust as needed for key width */
+  margin-right: 8px; /* Spacing between key and value */
+}
+
+.value-horizontal {
+  flex-grow: 1; /* Allows value to take up remaining space */
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.8);
 }
