@@ -30,7 +30,7 @@
 }
 
 /* Hover effect */
-:host ::ng-deep .main-sidenav .mat-mdc-list-item:hover {
+:host ::ng-deep .main-sidenav .mat-mdc-list-item:hover .list-item {
   background-color: #3ecc13;
 }
 
@@ -45,7 +45,7 @@
 :host ::ng-deep .main-sidenav a.active-link.mat-mdc-list-item {
   background-color: #3f51b5;
 }
-:host ::ng-deep .tool a.active-link.mat-mdc-list-item {
+:host ::ng-deep .tool a.active-link.mat-mdc-list-text {
   background-color: #3efa05;
 }
 

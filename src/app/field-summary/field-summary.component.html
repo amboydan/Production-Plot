@@ -1,16 +1,13 @@
-<mat-toolbar>
-  <span>{{ appState.selectedField$ | async }}</span>
-  <span class="spacer"></span>
-  <mat-button-toggle-group>
-    <mat-button-toggle *ngFor="let filter of filters" [value]="filter" (click)="toggleSelection(filter)">
-      {{ filter }}
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-</mat-toolbar>
 
-<!-- Example of clickable field cards -->
-<div class="field-cards">
-  <div *ngFor="let field of ['FieldA','FieldB','FieldC']" (click)="selectField(field)">
-    {{ field }}
-  </div>
-</div>
+<form [formGroup]="filterForm">
+    <mat-toolbar @slideInFromLeft>
+      <span>{{ appState.selectedField$ | async }}</span>
+      <span class="flex-spacer"></span> 
+      <mat-button-toggle-group formControlName="selectedTimeFilter" aria-label="Filter selection">
+        <mat-button-toggle *ngFor="let filter of filters" [value]="filter">
+          {{ filter }}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-toolbar>
+</form>
+

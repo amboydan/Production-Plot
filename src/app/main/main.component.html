@@ -13,7 +13,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="appState.selectedTeam$ | async as selectedTeam">
+    <mat-form-field *ngIf="appState.selectedTeam$ | async as selectedTeam" class="main-field-select">
       <mat-label>Field</mat-label>
       <mat-select
         [value]="appState.selectedField$ | async"

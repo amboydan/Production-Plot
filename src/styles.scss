@@ -3,3 +3,58 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+app-main {
+    .mat-mdc-list-item {
+        background-color: #fafcfa;
+        margin-bottom: 5px;
+    }
+    .mat-mdc-list-item.active-link {
+        background-color: #37f708;
+        margin-bottom: 5px;
+    }
+    .mat-mdc-list-item:hover {
+        background-color: #3aa71f;
+        margin-bottom: 5px;
+    }
+}
+
+app-field-summary {
+    .flex-spacer {
+        flex: 1 1 auto; /* This tells the element to grow and fill all available space */
+    }
+    
+    .mat-toolbar {
+        background-color: #fcfcfd;
+        border: 1px solid #ccc; 
+        border-radius: 6px;
+    }
+
+    .mat-button-toggle-group {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 16px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        .mat-button-toggle-checked {
+            background-color: limegreen !important;
+            color: white !important;
+            transition: background-color 0.3s ease-out, border-color 0.3s ease-out;
+
+            mat-icon {
+                color: white;
+            }
+        }
+
+        .mat-button-toggle {
+            display: flex;
+            align-items: center;
+            padding: 0 0px;
+            font-size: 18px;
+        }
+    }
+    
+}
+

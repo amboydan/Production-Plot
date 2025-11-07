@@ -79,8 +79,29 @@ export class MainComponent implements OnInit {
     });
   }
 
+  
+  wells: any[] = [];
+  loadFieldWells(field: string): void {
+    this.loading = true;
+    this.errorMessage = null;
+
+    this.hakConnectionsService.getFieldWells(field).subscribe({
+      next: (data) => {
+        this.wells = data || [];
+        this.loading = false;
+        console.log(data)
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to load team wells.';
+        this.loading = false;
+      }
+    });
+  }
+
   onTeamSelect(team: string) {
     this.appState.setSelectedTeam(team);
+    this.appState.setSelectedField(null);
     this.loadFields(team);
     this.router.navigate(['/teamOverview', team]);
   }
@@ -88,5 +109,6 @@ export class MainComponent implements OnInit {
   onFieldSelect(field: string) {
     this.appState.setSelectedField(field);
     this.router.navigate(['/fieldOverview', field]);
+    this.loadFieldWells(field);
   }
 }

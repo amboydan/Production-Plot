@@ -36,5 +36,11 @@ export class HakConnectionsService {
     const url = `http://localhost:3000/team/fields/${encodeURIComponent(selectedTeam)}`
     return this.getJson(url);
   }
+
+  getFieldWells(selectedField: string): Observable<any> {
+    // const url = `http://localhost:3000/teams`
+    const url = `http://localhost:3000/team/fieldWellsSummary/${encodeURIComponent(selectedField)}`
+    return this.getJson(url);
+  }
 }
 
