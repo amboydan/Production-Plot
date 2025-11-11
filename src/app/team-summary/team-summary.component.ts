@@ -31,6 +31,7 @@ export class TeamSummaryComponent implements OnInit {
 
   selectedTeam: string | null = null;
   stats: any[] = [];
+  
   loading: boolean = false;
   errorMessage: string | null = null;
 
@@ -45,6 +46,7 @@ export class TeamSummaryComponent implements OnInit {
     this.appState.selectedTeam$.subscribe(team => {
       this.selectedTeam = team;
       this.loadTeamStatistics();
+
     });
   }
 
@@ -71,9 +73,6 @@ export class TeamSummaryComponent implements OnInit {
     return Object.values(obj).reduce((sum, val) => sum + val, 0) === 0;
   }
 
-  /**
-   * Navigate to a field overview and update sidebar state
-   */
   goToField(stat: any) {
     if (!stat?.field_nm) return;
 
@@ -86,5 +85,7 @@ export class TeamSummaryComponent implements OnInit {
     // Navigate to the field overview page
     this.router.navigate(['/fieldOverview', stat.field_nm]);
   }
+
+  
 
 }

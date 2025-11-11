@@ -1,114 +1,108 @@
-import { Component, ViewEncapsulation, OnInit } from '@angular/core'; // Added OnInit
+import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { AppStateService } from '../app-state.service';
 import { HakConnectionsService } from '../hak-connections.service';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms'; // Import FormBuilder, FormGroup
-import {SelectionModel} from '@angular/cdk/collections';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   trigger,
   state,
   style,
   animate,
   transition
-} from '@angular/animations'
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-export interface WellsData {
-  well: string;
-  type: string;
-  status: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
+} from '@angular/animations';
 
 @Component({
   selector: 'app-field-summary',
   standalone: true,
   imports: [
-    CommonModule, MatToolbarModule, 
-    MatButtonToggleModule, MatIconModule, 
-    AsyncPipe, ReactiveFormsModule,
-    MatTableModule, MatCheckboxModule
+    CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule,
+    AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule
   ],
   templateUrl: './field-summary.component.html',
   styleUrls: ['./field-summary.component.scss'],
   encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('slideInFromLeft', [
-          state('void', style({ transform: 'translateX(-100%)', opacity: 0 })), // Initial state (hidden left)
-          state('*', style({ transform: 'translateX(0)', opacity: 1 })), // Final state (visible)
-          transition('void => *', [ // Transition from hidden to visible
-            animate('500ms ease-out') // Animation duration and easing
-          ]),
-          transition('* => void', [ // Optional: transition for when it leaves
-            animate('300ms ease-in', style({ transform: 'translateX(-100%)', opacity: 0 }))
-          ])
-        ])
+      state('void', style({ transform: 'translateX(-100%)', opacity: 0 })),
+      state('*', style({ transform: 'translateX(0)', opacity: 1 })),
+      transition('void => *', [animate('500ms ease-out')]),
+      transition('* => void', [animate('300ms ease-in', style({ transform: 'translateX(-100%)', opacity: 0 }))])
+    ])
   ]
 })
-
-
-export class FieldSummaryComponent implements OnInit { // Implement OnInit
-
+export class FieldSummaryComponent implements OnInit, OnDestroy {
+  
+  fieldWells: any[] = [];
+  wellAPIs: string[] = [];
+  loading = false;
+  errorMessage: string | null = null;
+  selectedTeam: string | null = null;
+  selectedField: string | null = null;
+  fieldProduction: any[] = [];
   filters = ['Week', 'Month', 'Year', 'All Time'];
 
-  public filterForm!: FormGroup; 
-  public defaultFilterValue: string = 'Year'; 
+  filterForm!: FormGroup;
+  defaultFilterValue = 'Year';
+
+  private subscriptions = new Subscription();
 
   constructor(
-    private hakConnectionsService: HakConnectionsService, 
-    public appState: AppStateService, 
+    private hakConnectionsService: HakConnectionsService,
+    public appState: AppStateService,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
-      selectedTimeFilter: [this.defaultFilterValue] 
-    });
-    
-    this.filterForm.get('selectedTimeFilter')?.valueChanges.subscribe(value => {
-      // this.appState.setCurrentFilter(value); 
+      selectedTimeFilter: [this.defaultFilterValue]
     });
 
-    this.appState.selectedField$.subscribe(field => {
-      this.selectedField = field;
-    });
+    // Watch filter changes (optional)
+    this.subscriptions.add(
+      this.filterForm.get('selectedTimeFilter')?.valueChanges.subscribe(value => {
+        // this.appState.setCurrentFilter(value);
+      })
+    );
 
-    this.loadFieldWells();
-    console.log(this.fieldWells);
+    // Watch for team changes
+    this.subscriptions.add(
+      this.appState.selectedTeam$.subscribe(team => {
+        if (team && team !== this.selectedTeam) {
+          this.selectedTeam = team;
+          // You could trigger related updates here if needed
+        }
+      })
+    );
+
+    // Watch for field changes
+    this.subscriptions.add(
+      this.appState.selectedField$.subscribe(field => {
+        if (field && field !== this.selectedField) {
+          this.selectedField = field;
+          // Automatically refresh data when field changes
+          this.loadFieldWells();
+          this.loadFieldProduction();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    // Prevent memory leaks
+    this.subscriptions.unsubscribe();
   }
 
   selectField(field: string) {
     this.appState.setSelectedField(field);
   }
 
-  selectedField: string | null = null;
-  fieldWells: any[] = [];
-  loading: boolean = false;
-  errorMessage: string | null = null;
-  
   loadFieldWells(): void {
     if (!this.selectedField) return;
 
@@ -118,8 +112,9 @@ export class FieldSummaryComponent implements OnInit { // Implement OnInit
     this.hakConnectionsService.getFieldWells(this.selectedField).subscribe({
       next: (data) => {
         this.fieldWells = data || [];
+        this.wellAPIs = data.map((s: { api: string }) => s.api);
         this.loading = false;
-        console.log(data)
+        console.log('Field wells loaded:', data);
       },
       error: (error) => {
         console.error(error);
@@ -129,33 +124,23 @@ export class FieldSummaryComponent implements OnInit { // Implement OnInit
     });
   }
 
-  // this should probably be in its own module. 
-  displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-  selection = new SelectionModel<PeriodicElement>(true, []);
+  loadFieldProduction(): void {
+    if (!this.selectedField) return;
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
+    this.loading = true;
+    this.errorMessage = null;
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  toggleAllRows() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
-    }
-
-    this.selection.select(...this.dataSource.data);
-  }
-
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: PeriodicElement): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+    this.hakConnectionsService.getFieldProduction(this.selectedField).subscribe({
+      next: (data) => {
+        this.fieldProduction = data || [];
+        this.loading = false;
+        console.log('Field production loaded:', data);
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to load team stats.';
+        this.loading = false;
+      }
+    });
   }
 }
