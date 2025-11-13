@@ -24,10 +24,14 @@ app-field-summary {
         flex: 1 1 auto; /* This tells the element to grow and fill all available space */
     }
     
+    .field-header {
+        font-size: 40px;
+    }
+
     .mat-toolbar {
-        background-color: #fcfcfd;
-        border: 1px solid #ccc; 
-        border-radius: 6px;
+        background-color: #d7d7d8;
+        border: 1px solid #050505; 
+        border-radius: 10px;
     }
 
     .mat-button-toggle-group {
@@ -36,6 +40,7 @@ app-field-summary {
         font-weight: 500;
         font-size: 16px;
         border-radius: 6px;
+        border: 1px solid #050505;
         transition: background-color 0.2s ease, color 0.2s ease;
 
         .mat-button-toggle-checked {
@@ -53,8 +58,24 @@ app-field-summary {
             align-items: center;
             padding: 0 0px;
             font-size: 18px;
+            border: 1px solid #050505;
         }
     }
     
 }
+
+app-field-prod-plot,
+app-field-prod-plot .chart-container {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+app-field-prod-plot canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 

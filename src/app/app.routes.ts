@@ -3,6 +3,7 @@ import { MainComponent } from './main/main.component';
 import { ContentComponent } from './content/content.component';
 import { TeamSummaryComponent } from './team-summary/team-summary.component';
 import { FieldSummaryComponent } from './field-summary/field-summary.component';
+import { FieldProdPlotComponent } from './field-prod-plot/field-prod-plot.component';
 
 export const routes: Routes = [
   {

@@ -1,5 +1,7 @@
 import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { FieldProdPlotComponent } from "../field-prod-plot/field-prod-plot.component";
+import { FieldProdPlotlyComponent } from '../field-prod-plotly/field-prod-plotly.component';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -11,7 +13,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
-  trigger,
+  trigger, 
   state,
   style,
   animate,
@@ -23,8 +25,9 @@ import {
   standalone: true,
   imports: [
     CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule,
-    AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule
-  ],
+    AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule,
+    FieldProdPlotComponent, FieldProdPlotlyComponent
+],
   templateUrl: './field-summary.component.html',
   styleUrls: ['./field-summary.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -114,11 +117,11 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         this.fieldWells = data || [];
         this.wellAPIs = data.map((s: { api: string }) => s.api);
         this.loading = false;
-        console.log('Field wells loaded:', data);
+        //console.log('Field wells loaded:', data);
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = 'Failed to load team wells.';
+        this.errorMessage = 'Failed to load field wells.';
         this.loading = false;
       }
     });
@@ -132,13 +135,14 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
 
     this.hakConnectionsService.getFieldProduction(this.selectedField).subscribe({
       next: (data) => {
-        this.fieldProduction = data || [];
+        //That ensures the input binding [prod]="fieldProduction" actually detects a change and triggers ngOnChanges() in the child.
+        this.fieldProduction = [...(data || [])];
         this.loading = false;
         console.log('Field production loaded:', data);
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = 'Failed to load team stats.';
+        this.errorMessage = 'Failed to load field production.';
         this.loading = false;
       }
     });

@@ -1,0 +1,121 @@
+import type { Layout } from 'plotly.js';
+
+export function getPlotlyLayout(xKey: string): Partial<Layout> {
+  return {
+    title: {
+      text: '',
+      font: {
+            family: 'Ariel Black',
+            size: 30,
+            weight: 300,
+            color: 'black'
+        }
+    },
+    height: 850,
+    autosize: true,
+    xaxis: {
+      title: {
+        text: ''
+      },
+      showline: true,
+      showgrid: true,
+      mirror: true,
+      bordercolor: 'black',
+      borderwidth: 3,
+      tickfont: {
+            family: 'Ariel Black',
+            size: 20,
+            color: 'black',
+            weight: 10
+        }
+        
+    } as any,
+    yaxis: {
+      title: {
+        text: 'Prod / Inj Rate & Pressure',
+        standoff: 30,
+        font: {
+            family: 'Ariel Black',
+            size: 26,
+            weight: 300,
+            color: 'black'
+        }
+      },
+      automargin: true,
+      type: 'log',
+      tickformat: ',.0f',
+      dtick: 1,
+      showline: true,
+      showgrid: true,
+      gridcolor: 'lightgrey',
+      mirror: true,
+      bordercolor: 'black',
+      borderwidth: 3,
+      minor: {
+        showgrid: true,
+        ticklen: 3,
+        tickcolor: 'black',
+        tickmode: 'auto'
+
+      },
+      tickfont: {
+            family: 'Ariel Black',
+            size: 20,
+            color: 'black',
+            weight: 10
+        }
+    } as any,
+    legend: {
+      orientation: 'h',
+      y: 0.2,
+      x: 0.5,
+      xref: 'container',
+      yref: 'container',
+      xanchor: 'center',
+      yanchor: 'top',
+      title: {
+        text: '',
+        standoff: 30,
+        font: {
+            family: 'Ariel Black',
+            size: 20,
+            weight: 10,
+            color: 'black'
+        }
+      },
+      font: {
+        size: 16,
+        color: 'black',
+        weight: 500
+      }
+    } as any,
+    hovermode: 'x unified',
+    //hoverinfo: 'skip',
+    margin: {
+      l: 150,
+      r: 100,
+      b: 250,
+      t: 100,
+      pad: 5
+    }
+  };
+}
+
+export const colorMap: Record<string, string> = {
+    'Gas': 'red',
+    'Oil': 'green',
+    'Water': 'blue',
+    'InjGas': 'pink',
+    'InjWtr': 'purple',
+    'LiftGas': 'orange',
+    'TbgPress': 'black',
+    'fdc_TbgPress': '#9E9E9E',
+    'TbgPress2': 'orange',
+    'TbgPress3': 'violet',
+    'CsgPress': 'grey',
+    'IA': 'lightgreen',
+    'OA': 'lightblue',
+    'OOA': 'darkblue'
+  };
+
+  
