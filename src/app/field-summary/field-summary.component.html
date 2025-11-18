@@ -10,12 +10,26 @@
       </mat-button-toggle-group>
     </mat-toolbar>
 </form>
-<mat-grid-list cols="2" rowHeight="700px">
+<mat-grid-list cols="2" rowHeight="800">
   <mat-grid-tile>
-    <app-field-prod-plot [prod]="fieldProduction"></app-field-prod-plot>
+
+      <app-field-prod-plotly [prod]="fieldProduction" ></app-field-prod-plotly>
+
   </mat-grid-tile>
   <mat-grid-tile>
-    <app-field-prod-plotly [prod]="fieldProduction"></app-field-prod-plotly>
+
+      <app-field-prod-plotly [prod]="fieldProduction"></app-field-prod-plotly>
+
+  </mat-grid-tile>
+  <mat-grid-tile>
+
+      <app-field-prod-plotly [prod]="fieldProduction"></app-field-prod-plotly>
+
+  </mat-grid-tile>
+  <mat-grid-tile>
+
+      <app-field-prod-plotly [prod]="fieldProduction"></app-field-prod-plotly>
+
   </mat-grid-tile>
 </mat-grid-list>
 

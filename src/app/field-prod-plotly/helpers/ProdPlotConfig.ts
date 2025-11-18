@@ -1,9 +1,9 @@
 import type { Layout } from 'plotly.js';
 
-export function getPlotlyLayout(xKey: string): Partial<Layout> {
+export function getPlotlyLayout(): Partial<Layout> {
   return {
     title: {
-      text: '',
+      text: 'Production Plot',
       font: {
             family: 'Ariel Black',
             size: 30,
@@ -11,7 +11,7 @@ export function getPlotlyLayout(xKey: string): Partial<Layout> {
             color: 'black'
         }
     },
-    height: 850,
+    height: 800,
     autosize: true,
     xaxis: {
       title: {
@@ -22,6 +22,7 @@ export function getPlotlyLayout(xKey: string): Partial<Layout> {
       mirror: true,
       bordercolor: 'black',
       borderwidth: 3,
+      ticklen: 5,
       tickfont: {
             family: 'Ariel Black',
             size: 20,
@@ -45,6 +46,7 @@ export function getPlotlyLayout(xKey: string): Partial<Layout> {
       type: 'log',
       tickformat: ',.0f',
       dtick: 1,
+      ticklen: 5,
       showline: true,
       showgrid: true,
       gridcolor: 'lightgrey',
@@ -94,28 +96,21 @@ export function getPlotlyLayout(xKey: string): Partial<Layout> {
     margin: {
       l: 150,
       r: 100,
-      b: 250,
-      t: 100,
+      b: 270,
+      t: 75,
       pad: 5
     }
   };
 }
 
 export const colorMap: Record<string, string> = {
-    'Gas': 'red',
-    'Oil': 'green',
-    'Water': 'blue',
-    'InjGas': 'pink',
-    'InjWtr': 'purple',
-    'LiftGas': 'orange',
-    'TbgPress': 'black',
-    'fdc_TbgPress': '#9E9E9E',
-    'TbgPress2': 'orange',
-    'TbgPress3': 'violet',
-    'CsgPress': 'grey',
-    'IA': 'lightgreen',
-    'OA': 'lightblue',
-    'OOA': 'darkblue'
-  };
+    'gas': 'red',
+    'oil': 'green',
+    'water': 'blue',
+    'inj_gas': 'pink',
+    'inj_wtr': 'purple',
+    'wtr_disposal': 'lightblue',
+    'well_count': 'black'
+};
 
   

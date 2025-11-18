@@ -95,6 +95,8 @@ export class FieldProdPlotComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['prod'] && this.prod?.length) {
       if (this.chart) {

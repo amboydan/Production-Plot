@@ -5,10 +5,12 @@ import { FieldProdPlotlyComponent } from '../field-prod-plotly/field-prod-plotly
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AppStateService } from '../app-state.service';
 import { HakConnectionsService } from '../hak-connections.service';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, FormControl } from '@angular/forms';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -19,18 +21,22 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import { MatFormField, MatLabel, MatHint } from "@angular/material/form-field";
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-field-summary',
   standalone: true,
   imports: [
-    CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule,
+    CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule, MatDatepickerModule,
     AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule,
-    FieldProdPlotComponent, FieldProdPlotlyComponent
+    FieldProdPlotComponent, FieldProdPlotlyComponent, MatInputModule, MatFormField, MatLabel,
+    MatHint, FormsModule
 ],
   templateUrl: './field-summary.component.html',
   styleUrls: ['./field-summary.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  providers: [provideNativeDateAdapter()],
   animations: [
     trigger('slideInFromLeft', [
       state('void', style({ transform: 'translateX(-100%)', opacity: 0 })),
@@ -50,9 +56,16 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
   selectedField: string | null = null;
   fieldProduction: any[] = [];
   filters = ['Week', 'Month', 'Year', 'All Time'];
+  startDate: string | null = null;
+  stopDate: string | null = null;
 
   filterForm!: FormGroup;
   defaultFilterValue = 'Year';
+
+  readonly range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
 
   private subscriptions = new Subscription();
 
@@ -66,13 +79,21 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
     this.filterForm = this.fb.group({
       selectedTimeFilter: [this.defaultFilterValue]
     });
+    this.applyTimeFilter(this.defaultFilterValue);
+
 
     // Watch filter changes (optional)
     this.subscriptions.add(
       this.filterForm.get('selectedTimeFilter')?.valueChanges.subscribe(value => {
-        // this.appState.setCurrentFilter(value);
+        this.applyTimeFilter(value);
+
+        // Only load production if a field is selected
+        if (this.selectedField) {
+          this.loadFieldProduction();
+        }
       })
     );
+
 
     // Watch for team changes
     this.subscriptions.add(
@@ -95,6 +116,7 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         }
       })
     );
+
   }
 
   ngOnDestroy(): void {
@@ -133,12 +155,13 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.errorMessage = null;
 
-    this.hakConnectionsService.getFieldProduction(this.selectedField).subscribe({
+
+    this.hakConnectionsService.getFieldProduction(this.selectedField, this.startDate).subscribe({
       next: (data) => {
         //That ensures the input binding [prod]="fieldProduction" actually detects a change and triggers ngOnChanges() in the child.
         this.fieldProduction = [...(data || [])];
         this.loading = false;
-        console.log('Field production loaded:', data);
+        // console.log('Field production loaded:', data);
       },
       error: (error) => {
         console.error(error);
@@ -146,5 +169,41 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+
+  applyTimeFilter(filter: string) {
+    const today = new Date();
+    let startDate: Date | null = null;
+
+    switch (filter) {
+      case 'Week':
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 8);
+        break;
+
+      case 'Month':
+        startDate = new Date(today);
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+
+      case 'Year':
+        startDate = new Date(today);
+        startDate.setFullYear(today.getFullYear() - 1);
+        break;
+
+      case 'All Time':
+        startDate = new Date(today);
+        startDate.setFullYear(today.getFullYear() - 30);
+        break;
+    }
+
+    if(startDate) {
+      this.startDate = this.toSqlDate(startDate);
+    }
+    
+  }
+
+  private toSqlDate(date: Date ): string {
+    return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
   }
 }

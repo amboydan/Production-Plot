@@ -1,69 +1,115 @@
-/* You can add global styles to this file, and also import other style files */
+/* Import Angular Material prebuilt theme */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-app-main {
-    .mat-mdc-list-item {
-        background-color: #fafcfa;
-        margin-bottom: 5px;
-    }
-    .mat-mdc-list-item.active-link {
-        background-color: #37f708;
-        margin-bottom: 5px;
-    }
-    .mat-mdc-list-item:hover {
-        background-color: #3aa71f;
-        margin-bottom: 5px;
-    }
+/* Base global styles */
+html, body {
+  height: 100%;
 }
 
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* --- app-main list styles --- */
+app-main {
+  .mat-mdc-list-item {
+    background-color: #fafcfa;
+    margin-bottom: 5px;
+
+    &.active-link {
+      background-color: #37f708;
+    }
+
+    &:hover {
+      background-color: #3aa71f;
+    }
+  }
+}
+
+/* --- app-field-summary styles --- */
 app-field-summary {
-    .flex-spacer {
-        flex: 1 1 auto; /* This tells the element to grow and fill all available space */
-    }
-    
-    .field-header {
-        font-size: 40px;
-    }
+  /* Grid */
+  .mat-grid-list {
+    height: 100%;
+  }
 
-    .mat-toolbar {
-        background-color: #d7d7d8;
-        border: 1px solid #050505; 
-        border-radius: 10px;
-    }
+  .mat-grid-tile {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .mat-button-toggle-group {
+  /* Toolbar elements */
+  .flex-spacer {
+    flex: 1 1 auto; /* grow to fill space */
+  }
+
+  .field-header {
+    font-size: 2.5rem; /* responsive scaling */
+  }
+
+  /* Toolbar datepicker */
+  mat-toolbar {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    mat-form-field {
+      height: 48px; /* typical toolbar height */
+      display: flex;
+      align-items: center;
+      margin: 0 8px;
+
+      .mat-mdc-form-field-infix {
         display: flex;
         align-items: center;
-        font-weight: 500;
-        font-size: 16px;
-        border-radius: 6px;
-        border: 1px solid #050505;
-        transition: background-color 0.2s ease, color 0.2s ease;
-
-        .mat-button-toggle-checked {
-            background-color: limegreen !important;
-            color: white !important;
-            transition: background-color 0.3s ease-out, border-color 0.3s ease-out;
-
-            mat-icon {
-                color: white;
-            }
-        }
-
-        .mat-button-toggle {
-            display: flex;
-            align-items: center;
-            padding: 0 0px;
-            font-size: 18px;
-            border: 1px solid #050505;
-        }
+        height: 100%;
+        padding: 0;
+      }
     }
-    
+
+    .mat-datepicker-toggle {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      height: 32px;
+      min-width: 32px;
+      background-color: #d7d7d8;
+      border-radius: 10px;
+    }
+  }
+
+  /* Button toggle group */
+  .mat-button-toggle-group {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #050505;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    .mat-button-toggle-checked {
+      background-color: limegreen !important;
+      color: white !important;
+      transition: background-color 0.3s ease-out, border-color 0.3s ease-out;
+
+      mat-icon {
+        color: white;
+      }
+    }
+
+    .mat-button-toggle {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      font-size: 18px;
+      border: 1px solid #050505;
+    }
+  }
 }
 
+/* --- Chart container styles --- */
 app-field-prod-plot,
 app-field-prod-plot .chart-container {
   position: relative;
@@ -78,4 +124,9 @@ app-field-prod-plot canvas {
   height: 100% !important;
 }
 
-
+app-field-prod-plotly {
+  .plot-container {
+    width: 100%;
+    height: 100%;
+  }
+}
