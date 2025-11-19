@@ -108,10 +108,13 @@ export class FieldProdPlotlyComponent implements AfterViewInit, OnChanges {
       x: dates,
       y: this.prod.map((item) => item[name]),
       type: 'scatter',
-      mode: 'lines',
+      mode: 'lines+markers',
       name: name,
       line: {
         color: this.colorMap[name] || 'black'
+      },
+      marker: {
+        size: 5
       }
     }));
   }
