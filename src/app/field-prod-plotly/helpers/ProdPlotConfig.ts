@@ -1,17 +1,9 @@
 import type { Layout } from 'plotly.js';
 
 export function getPlotlyLayout(): Partial<Layout> {
+
   return {
-    title: {
-      text: 'Production Plot',
-      font: {
-            family: 'Ariel Black',
-            size: 30,
-            weight: 300,
-            color: 'black'
-        }
-    },
-    height: 800,
+    height: 1000,
     autosize: true,
     xaxis: {
       title: {
@@ -92,14 +84,21 @@ export function getPlotlyLayout(): Partial<Layout> {
       }
     } as any,
     hovermode: 'x unified',
-    //hoverinfo: 'skip',
+    hoverlabel: {
+      bgcolor: 'white',       
+      font: { size: 14 },     
+      align: 'left',           
+      namelength: -1          
+    },
     margin: {
-      l: 150,
-      r: 100,
+      l: 250,
+      r: 150,
       b: 270,
-      t: 75,
-      pad: 5
-    }
+      t: 100,
+      pad: 0
+    },
+    selectdirection: 'any',
+    selectionrevision: 0
   };
 }
 
@@ -113,4 +112,12 @@ export const colorMap: Record<string, string> = {
     'well_count': 'black'
 };
 
-  
+export const legendNameMap: Record<string, string> = {
+  oil: "Oil (bbl/d)",
+  gas: "Gas (mcf/d)",
+  water: "Water (bbl/d)",
+  inj_wtr: "Inj Water (bbl/d)",
+  inj_gas: "Inj Gas (mcf/d)",
+  wtr_disposal: "Wtr Disposal (bbl/d)",
+  well_count: 'Producer Count'
+}  

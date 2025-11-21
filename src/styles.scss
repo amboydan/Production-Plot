@@ -29,84 +29,83 @@ app-main {
 
 /* --- app-field-summary styles --- */
 app-field-summary {
-  /* Grid */
-  .mat-grid-list {
-    height: 100%;
-  }
+    /* Grid */
+    .mat-grid-list {
+        height: 100%;
+        margin: 16px;
+    }
 
-  .mat-grid-tile {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+    .mat-grid-tile {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid black;
+    }
 
-  /* Toolbar elements */
-  .flex-spacer {
-    flex: 1 1 auto; /* grow to fill space */
-  }
+    /* Toolbar elements */
+    .flex-spacer {
+        flex: 1 1 auto; /* grow to fill space */
+    }
 
-  .field-header {
-    font-size: 2.5rem; /* responsive scaling */
-  }
+    .field-header {
+        font-size: 2.5rem; /* responsive scaling */
+    }
 
-  /* Toolbar datepicker */
-  mat-toolbar {
-    padding-top: 0;
-    padding-bottom: 0;
+    /* Toolbar datepicker */
+    mat-toolbar .form-toolbar {
+        padding-top: 0;
+        padding-bottom: 0;
+        background-color: white !important;
 
-    mat-form-field {
-      height: 48px; /* typical toolbar height */
-      display: flex;
-      align-items: center;
-      margin: 0 8px;
-
-      .mat-mdc-form-field-infix {
+        mat-form-field {
+        height: 48px; /* typical toolbar height */
         display: flex;
         align-items: center;
+        margin: 0 8px;
+        }
+    }
+
+    /* Button toggle group */
+    .mat-button-toggle-group {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #050505;
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        .mat-button-toggle-checked {
+        background-color: limegreen !important;
+        color: white !important;
+        transition: background-color 0.3s ease-out, border-color 0.3s ease-out;
+
+        mat-icon {
+            color: white;
+        }
+        }
+
+        .mat-button-toggle {
+        display: flex;
+        align-items: center;
+        padding: 0 4px;
+        font-size: 18px;
+        border: 1px solid #050505;
+        }
+    }
+
+    .loading-overlay {
+        position: fixed; /* Covers the whole viewport */
+        top: 0;
+        left: 0;
+        width: 100%;
         height: 100%;
-        padding: 0;
-      }
+        background: rgba(255, 255, 255, 0.8); /* semi-transparent white */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* Make sure it's above other content */
     }
-
-    .mat-datepicker-toggle {
-      display: flex;
-      align-items: center;
-      margin: 0;
-      height: 32px;
-      min-width: 32px;
-      background-color: #d7d7d8;
-      border-radius: 10px;
-    }
-  }
-
-  /* Button toggle group */
-  .mat-button-toggle-group {
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-    font-size: 16px;
-    border-radius: 6px;
-    border: 1px solid #050505;
-    transition: background-color 0.2s ease, color 0.2s ease;
-
-    .mat-button-toggle-checked {
-      background-color: limegreen !important;
-      color: white !important;
-      transition: background-color 0.3s ease-out, border-color 0.3s ease-out;
-
-      mat-icon {
-        color: white;
-      }
-    }
-
-    .mat-button-toggle {
-      display: flex;
-      align-items: center;
-      padding: 0 4px;
-      font-size: 18px;
-      border: 1px solid #050505;
-    }
-  }
 }
 
 /* --- Chart container styles --- */
@@ -129,4 +128,32 @@ app-field-prod-plotly {
     width: 100%;
     height: 100%;
   }
+  .js-plotly-plot .plotly .modebar {
+        height: 30px; 
+        width: 150px; 
+    }
+}
+
+app-field-prod-weekly-plotly {
+  .plot-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .plot-container-wrapper {
+  position: relative; /* container for plot and spinner */
+
+  .loading-overlay {
+    position: absolute; /* overlay relative to container */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8); // semi-transparent white
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; // ensure it's above plot
+  }
+}
 }

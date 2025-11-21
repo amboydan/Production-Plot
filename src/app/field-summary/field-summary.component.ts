@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FieldProdPlotComponent } from "../field-prod-plot/field-prod-plot.component";
 import { FieldProdPlotlyComponent } from '../field-prod-plotly/field-prod-plotly.component';
@@ -30,8 +30,7 @@ import {MatInputModule} from '@angular/material/input';
   imports: [
     CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule, MatDatepickerModule,
     AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule,
-    FieldProdPlotComponent, FieldProdPlotlyComponent, MatInputModule, MatFormField, MatLabel,
-    MatHint, FormsModule
+    FieldProdPlotlyComponent, MatInputModule,  FormsModule
 ],
   templateUrl: './field-summary.component.html',
   styleUrls: ['./field-summary.component.scss'],
@@ -55,9 +54,10 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
   selectedTeam: string | null = null;
   selectedField: string | null = null;
   fieldProduction: any[] = [];
-  filters = ['Week', 'Month', 'Year', 'All Time'];
+  filters = ['Week', 'Month', 'Year', '5 Years', '10 Years', 'All Time'];
   startDate: string | null = null;
   stopDate: string | null = null;
+  regressionStats: any = null;
 
   filterForm!: FormGroup;
   defaultFilterValue = 'Year';
@@ -80,8 +80,7 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
       selectedTimeFilter: [this.defaultFilterValue]
     });
     this.applyTimeFilter(this.defaultFilterValue);
-
-
+    
     // Watch filter changes (optional)
     this.subscriptions.add(
       this.filterForm.get('selectedTimeFilter')?.valueChanges.subscribe(value => {
@@ -93,7 +92,6 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         }
       })
     );
-
 
     // Watch for team changes
     this.subscriptions.add(
@@ -131,20 +129,20 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
   loadFieldWells(): void {
     if (!this.selectedField) return;
 
-    this.loading = true;
+    //this.loading = true;
     this.errorMessage = null;
 
     this.hakConnectionsService.getFieldWells(this.selectedField).subscribe({
       next: (data) => {
         this.fieldWells = data || [];
         this.wellAPIs = data.map((s: { api: string }) => s.api);
-        this.loading = false;
+        //this.loading = false;
         //console.log('Field wells loaded:', data);
       },
       error: (error) => {
         console.error(error);
         this.errorMessage = 'Failed to load field wells.';
-        this.loading = false;
+       // this.loading = false;
       }
     });
   }
@@ -191,6 +189,16 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         startDate.setFullYear(today.getFullYear() - 1);
         break;
 
+      case '5 Years':
+        startDate = new Date(today);
+        startDate.setFullYear(today.getFullYear() - 5);
+        break;
+
+      case '10 Years':
+        startDate = new Date(today);
+        startDate.setFullYear(today.getFullYear() - 10);
+        break;
+
       case 'All Time':
         startDate = new Date(today);
         startDate.setFullYear(today.getFullYear() - 30);
@@ -205,5 +213,18 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
 
   private toSqlDate(date: Date ): string {
     return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+  }
+
+
+  onSelectedPoints(points: any[]) {
+    //console.log('Selected points:', points);
+    this.hakConnectionsService.getRegressionStatistics(points)
+      .subscribe({
+        next: (result) => {
+          this.regressionStats = result;
+          console.log(result)
+        },
+        error: (err) => console.error('Regression API error', err)
+      }); 
   }
 }

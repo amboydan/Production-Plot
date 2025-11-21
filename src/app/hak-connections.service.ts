@@ -49,7 +49,6 @@ export class HakConnectionsService {
   getFieldProduction(selectedField: string, startDate: string | null): Observable<any> {
     const safeDate = startDate ?? '';
     const url = `http://localhost:3000/team/field/production/${encodeURIComponent(selectedField)}/${encodeURIComponent(safeDate)}`;
-    console.log(url);
     return this.getJson(url).pipe(
       //timeout(30000), // Wait for up to 30 seconds
       catchError(err => {
@@ -58,6 +57,11 @@ export class HakConnectionsService {
         return throwError(() => new Error('Request timed out after 30 seconds'));
       })
     );
-}
+  }
+
+  getRegressionStatistics(selectedPoints: any[]): Observable<any> {
+    const url = 'http://127.0.0.1:2929/fieldStatistics'
+    return this.http.post<any>(url, { points: selectedPoints });
+  }
 }
 

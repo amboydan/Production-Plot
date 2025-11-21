@@ -50,14 +50,4 @@
   color: rgba(0, 0, 0, 0.8);
 }
 
-.mat-toolbar .mat-form-field {
-  margin: 0;
-  padding: 0;
-  align-self: center;       // vertically centers the field
-  transform: translateY(-4px); // optional fine adjustment
-}
 
-.mat-toolbar .mat-mdc-form-field-infix {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}

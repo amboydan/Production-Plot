@@ -1,3 +1,19 @@
-<div #plotContainer class="plot-container"></div>
+<div class="tile-container">
+  <!-- Spinner overlay: shown while plot is not ready -->
+  <div class="spinner-overlay" *ngIf="!plotReady">
+    <div class="spinner"></div>
+  </div>
 
+  <!-- Plot container -->
+  <div
+    #plotContainer
+    class="plot-container"
+    [class.hidden]="!plotReady"
+    aria-label="Plotly chart"
+  ></div>
 
+  <!-- Optional: overlay message when no data is available -->
+  <div class="no-data-overlay" *ngIf="plotReady && (!prod || prod.length === 0)">
+    <span>No data available</span>
+  </div>
+</div>

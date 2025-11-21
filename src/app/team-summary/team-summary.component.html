@@ -20,7 +20,7 @@
     <div *ngIf="!isSumZero(stat)">
       <mat-card-header>
         <mat-card-title>
-          <div class="card-title">{{ stat.field_nm || stat.field }}</div>
+          <div class="card-title">{{ stat.field_nm || stat.field | truncateAfterDash}}</div>
         </mat-card-title>
       </mat-card-header>
       <br>

@@ -1,6 +1,6 @@
 
 <form [formGroup]="filterForm">
-    <mat-toolbar @slideInFromLeft>
+    <mat-toolbar class="form-toolbar" @slideInFromLeft>
       <span class="field-header">{{ appState.selectedField$ | async }}</span>
       <span class="flex-spacer"></span> 
       <mat-button-toggle-group formControlName="selectedTimeFilter" aria-label="Filter selection">
@@ -10,13 +10,11 @@
       </mat-button-toggle-group>
     </mat-toolbar>
 </form>
-<mat-grid-list cols="2" rowHeight="800">
+
+<mat-grid-list cols="1" rowHeight="900" gutterSize="10px">
   <mat-grid-tile>
-
-      <app-field-prod-plotly [prod]="fieldProduction" ></app-field-prod-plotly>
-
+    <app-field-prod-plotly dragmode="zoom" (selectionChanged)="onSelectedPoints($event)" [prod]="fieldProduction"></app-field-prod-plotly>
   </mat-grid-tile>
-
 </mat-grid-list>
 
 

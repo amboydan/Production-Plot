@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { HakConnectionsService } from '../hak-connections.service';
 import { AppStateService } from '../app-state.service';
+import { TruncateAfterDashPipe } from '../truncate-after-dash.pipe';
 
 @Component({
   selector: 'app-team-summary',
@@ -14,7 +15,8 @@ import { AppStateService } from '../app-state.service';
     MatButtonModule,
     MatCardModule,
     CommonModule,
-    RouterLink
+    RouterLink,
+    TruncateAfterDashPipe
   ],
   templateUrl: './team-summary.component.html',
   styleUrls: ['./team-summary.component.scss'],
