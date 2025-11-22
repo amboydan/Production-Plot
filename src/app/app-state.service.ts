@@ -28,4 +28,26 @@ export class AppStateService {
   get currentField(): string | null {
     return this.selectedFieldSource.value;
   }
+
+  private fieldsSource = new BehaviorSubject<any[]>([]);
+  fields$ = this.fieldsSource.asObservable();
+
+  setFields(fields: any[]) {
+    this.fieldsSource.next(fields);
+  }
+
+  get currentFields(): any[] {
+    return this.fieldsSource.value;
+  }
+
+  private wellsSource = new BehaviorSubject<any[]>([]);
+  wells$ = this.fieldsSource.asObservable();
+
+  setWells(wells: any[]) {
+    this.wellsSource.next(wells);
+  }
+
+  get currentWells(): any[] {
+    return this.fieldsSource.value;
+  }
 }

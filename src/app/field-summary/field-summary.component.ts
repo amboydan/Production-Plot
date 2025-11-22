@@ -14,6 +14,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, FormsModule, FormControl }
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TruncateAfterDashPipe } from '../truncate-after-dash.pipe';
 import {
   trigger, 
   state,
@@ -30,7 +31,7 @@ import {MatInputModule} from '@angular/material/input';
   imports: [
     CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule, MatDatepickerModule,
     AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule,
-    FieldProdPlotlyComponent, MatInputModule,  FormsModule
+    FieldProdPlotlyComponent, MatInputModule,  FormsModule, TruncateAfterDashPipe
 ],
   templateUrl: './field-summary.component.html',
   styleUrls: ['./field-summary.component.scss'],
@@ -129,20 +130,20 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
   loadFieldWells(): void {
     if (!this.selectedField) return;
 
-    //this.loading = true;
+    this.loading = true;
     this.errorMessage = null;
 
     this.hakConnectionsService.getFieldWells(this.selectedField).subscribe({
       next: (data) => {
         this.fieldWells = data || [];
         this.wellAPIs = data.map((s: { api: string }) => s.api);
-        //this.loading = false;
-        //console.log('Field wells loaded:', data);
+        this.appState.setWells(data);
+        this.loading = false;
       },
       error: (error) => {
         console.error(error);
         this.errorMessage = 'Failed to load field wells.';
-       // this.loading = false;
+        this.loading = false;
       }
     });
   }

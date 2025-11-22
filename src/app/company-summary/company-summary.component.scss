@@ -1,0 +1,34 @@
+.team-cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  // ⭐ max 3 columns
+  gap: 20px;
+  width: 100%;
+
+  .team-card {
+    text-align: center;
+    cursor: pointer;
+
+    mat-card-header,
+    mat-card-title,
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+    }
+    transition: box-shadow 0.3s, transform 0.3s;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(4, 59, 238, 0.486); // higher elevation
+    transform: translateY(-4px); // subtle lift
+  }
+  }
+}
+
+.card-title {
+    font-size: 30px;
+    font-weight: 500;
+    color: #0717f5;
+}

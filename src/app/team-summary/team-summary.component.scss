@@ -1,3 +1,4 @@
+
 .team-cards-container {
   display: flex;
   flex-wrap: wrap;
@@ -9,6 +10,12 @@
     max-width: 300px;
     min-width: 200px;
     box-sizing: border-box;
+    transition: box-shadow 0.3s, transform 0.3s;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(4, 59, 238, 0.486); // higher elevation
+    transform: translateY(-4px); // subtle lift
+  }
   }
 }
 

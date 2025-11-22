@@ -1,35 +1,62 @@
 <app-header></app-header>
+
 <mat-sidenav-container class="app-container">
+
+  <!-- Sidebar -->
   <mat-sidenav mode="side" opened class="app-sidenav">
-    <mat-form-field class="main-team-select">
-      <mat-label>Asset Team</mat-label>
-      <mat-select
-        [value]="appState.selectedTeam$ | async"
-        (selectionChange)="onTeamSelect($event.value)"
-      >
-        <mat-option *ngFor="let team of teams" [value]="team.asset_team_nm">
-          {{ team.asset_team_nm }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field *ngIf="appState.selectedTeam$ | async as selectedTeam" class="main-field-select">
-      <mat-label>Field</mat-label>
-      <mat-select
-        [value]="appState.selectedField$ | async"
-        (selectionChange)="onFieldSelect($event.value)"
-      >
-        <mat-option *ngFor="let field of fields" [value]="field.field_nm">
-          {{ field.field_nm }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <!-- Top Navigation Link -->
+    <mat-nav-list>
+      <a mat-list-item [routerLink]="['/companyOverview']" routerLinkActive="active-link">
+        Company Overview
+      </a>
+    </mat-nav-list>
 
-    <mat-nav-list *ngIf="appState.selectedTeam$ | async as selectedTeam">
-      <a mat-list-item [routerLink]="['/teamOverview', selectedTeam]" routerLinkActive="active-link">
+    <!-- Team & Field Selects -->
+    <div class="sidebar-selects">
+
+      <!-- Team Select -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Asset Team</mat-label>
+        <mat-select
+          [value]="appState.selectedTeam$ | async"
+          (selectionChange)="onTeamSelect($event.value)"
+        >
+          <mat-option *ngFor="let team of teams" [value]="team.asset_team_nm">
+            {{ team.asset_team_nm }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    
+    <mat-nav-list>
+      <a *ngIf="appState.selectedTeam$ | async as selectedTeam"
+        mat-list-item
+        [routerLink]="['/teamOverview', selectedTeam]"
+        routerLinkActive="active-link">
         Team Overview
       </a>
-      <div *ngIf="appState.selectedField$ | async as selectedField">
+    </mat-nav-list>
+
+    <div class="sidebar-selects">
+      <!-- Field Select (Reactive) -->
+      <mat-form-field *ngIf="appState.selectedTeam$ | async as selectedTeam" appearance="fill" class="full-width">
+        <mat-label>Field</mat-label>
+        <mat-select
+          [value]="appState.selectedField$ | async"
+          (selectionChange)="onFieldSelect($event.value)"
+        >
+          <mat-option *ngFor="let field of appState.fields$ | async" [value]="field.field_nm">
+            {{ field.field_nm }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <!-- Conditional Navigation Links -->
+    <mat-nav-list>
+      <ng-container *ngIf="appState.selectedField$ | async as selectedField">
         <a mat-list-item [routerLink]="['/fieldOverview', selectedField]" routerLinkActive="active-link">
           Field Overview
         </a>
@@ -42,13 +69,17 @@
         <a mat-list-item routerLink="/wellConstruction" routerLinkActive="active-link">
           Well Construction
         </a>
-      </div>
+      </ng-container>
+
     </mat-nav-list>
+
   </mat-sidenav>
 
+  <!-- Main Content -->
   <mat-sidenav-content class="app-content">
     <div class="content-body">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
+
 </mat-sidenav-container>

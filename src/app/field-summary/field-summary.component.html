@@ -1,7 +1,9 @@
 
 <form [formGroup]="filterForm">
     <mat-toolbar class="form-toolbar" @slideInFromLeft>
-      <span class="field-header">{{ appState.selectedField$ | async }}</span>
+      <span class="field-header" *ngIf="appState.selectedField$ | async as selectedField">
+        {{ selectedField | truncateAfterDash }}
+      </span>
       <span class="flex-spacer"></span> 
       <mat-button-toggle-group formControlName="selectedTimeFilter" aria-label="Filter selection">
         <mat-button-toggle *ngFor="let filter of filters" [value]="filter">

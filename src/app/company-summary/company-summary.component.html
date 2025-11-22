@@ -1,0 +1,37 @@
+
+<!-- Loading State -->
+<div *ngIf="loading && !errorMessage" class="loading-container">
+  <p>Loading teams...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="!loading" class="error-container">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<!-- Team Stats Cards -->
+<div *ngIf="!loading" class="team-cards-container">
+  <mat-card 
+    *ngFor="let team of teams" 
+    class="team-card" 
+    @fadeIn
+    (click)="goToTeam(team.asset_team_nm)" 
+    style="cursor: pointer;"
+  >
+      <mat-card-header>
+        <mat-card-title>
+          <div class="card-title">{{ team.asset_team_nm }}</div>
+        </mat-card-title>
+      </mat-card-header>
+      <br>
+      <mat-card-content>
+
+      </mat-card-content>
+
+  </mat-card>
+</div>
+
+<!-- Empty State -->
+<div *ngIf="!loading && errorMessage" class="empty-container">
+  <p>Something went terribly wrong.</p>
+</div>

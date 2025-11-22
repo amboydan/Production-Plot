@@ -33,6 +33,8 @@ export class TeamSummaryComponent implements OnInit {
 
   selectedTeam: string | null = null;
   stats: any[] = [];
+  fieldWells: any[] = [];
+  wellAPIs: string[] = [];
   
   loading: boolean = false;
   errorMessage: string | null = null;
@@ -48,7 +50,6 @@ export class TeamSummaryComponent implements OnInit {
     this.appState.selectedTeam$.subscribe(team => {
       this.selectedTeam = team;
       this.loadTeamStatistics();
-
     });
   }
 
@@ -75,15 +76,34 @@ export class TeamSummaryComponent implements OnInit {
     return Object.values(obj).reduce((sum, val) => sum + val, 0) === 0;
   }
 
+  loadFieldWells(field: string): void {
+    if (!field) return;
+
+    this.loading = true;
+    this.errorMessage = null;
+
+    this.hakConnectionsService.getFieldWells(field).subscribe({
+      next: (data) => {
+        this.fieldWells = data || [];
+        this.wellAPIs = data.map((s: { api: string }) => s.api);
+        this.appState.setWells(data);
+        this.loading = false;
+        console.log('Field wells loaded:', this.wellAPIs);
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Failed to load field wells.';
+        this.loading = false;
+      }
+    });
+  }
+
   goToField(stat: any) {
     if (!stat?.field_nm) return;
 
     // Update the selected field in the shared service
     this.appState.setSelectedField(stat.field_nm);
-
-    // Optionally, mark the sidebar active link
-    //this.appState.setActiveLink('fieldOverview');
-
+    this.loadFieldWells(stat.field_nm);
     // Navigate to the field overview page
     this.router.navigate(['/fieldOverview', stat.field_nm]);
   }

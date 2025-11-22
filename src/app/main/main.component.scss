@@ -73,8 +73,24 @@
 
 .content-body {
   flex: 1;
-  padding: 16px;
+  padding: 5px;
   background: whitesmoke;
   overflow: auto;
+}
+
+.app-sidenav {
+  width: 300px;
+  padding: 10px;
+}
+
+.sidebar-selects {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;      // spacing between selects
+  margin: 0px 0;
+}
+
+.full-width {
+  width: 100%;
 }
 
