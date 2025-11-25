@@ -131,7 +131,7 @@ export class FieldProdPlotlyComponent
       yaxis: {
         ...this.layout.yaxis,
         type: this.yAxisType,
-        tickformat: this.yAxisType === 'log' ? ',.0f' : ',.0f'
+        tickformat: ',.0f' //this.yAxisType === 'log' ? ',.0f' : ',.0f'
       }
     };
 

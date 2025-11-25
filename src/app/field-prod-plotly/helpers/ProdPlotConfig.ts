@@ -1,4 +1,5 @@
 import type { Layout } from 'plotly.js';
+import { AppStateService } from '../../app-state.service';
 
 export function getPlotlyLayout(): Partial<Layout> {
 
@@ -35,9 +36,9 @@ export function getPlotlyLayout(): Partial<Layout> {
         }
       },
       automargin: true,
-      type: 'log',
+      //type: 'log',
       tickformat: ',.0f',
-      dtick: 1,
+      //dtick: 1,
       tickvals: undefined,
       tickmode: 'auto',
       ticklen: 5,
