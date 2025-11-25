@@ -5,11 +5,22 @@
         {{ selectedField | truncateAfterDash }}
       </span>
       <span class="flex-spacer"></span> 
+      <span>&nbsp;</span> 
+      
+      <mat-button-toggle-group formControlName="selectedScale" aria-label="Scale selection">
+        <mat-button-toggle *ngFor="let scale of scales" [value]="scale">
+          {{ scale }}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      
+      <span>&nbsp;&nbsp;&nbsp;</span>
+      
       <mat-button-toggle-group formControlName="selectedTimeFilter" aria-label="Filter selection">
         <mat-button-toggle *ngFor="let filter of filters" [value]="filter">
           {{ filter }}
         </mat-button-toggle>
       </mat-button-toggle-group>
+    
     </mat-toolbar>
 </form>
 

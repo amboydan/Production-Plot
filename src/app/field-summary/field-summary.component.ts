@@ -56,6 +56,8 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
   selectedField: string | null = null;
   fieldProduction: any[] = [];
   filters = ['Week', 'Month', 'Year', '5 Years', '10 Years', 'All Time'];
+  scales = ['Log', 'Linear'];
+
   startDate: string | null = null;
   stopDate: string | null = null;
   regressionStats: any = null;
@@ -63,34 +65,44 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
   filterForm!: FormGroup;
   defaultFilterValue = 'Year';
 
-  readonly range = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-  });
+  yScaleForm!: FormGroup;
+  defaultScaleValue = 'Log';
+  yAxisType: 'linear' | 'log' = 'log';
+  yAxisTickFormat: string | null = null;
 
   private subscriptions = new Subscription();
 
   constructor(
     private hakConnectionsService: HakConnectionsService,
     public appState: AppStateService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private fb_: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
-      selectedTimeFilter: [this.defaultFilterValue]
+      selectedTimeFilter: [this.defaultFilterValue],
+      selectedScale: [this.defaultScaleValue]
     });
     this.applyTimeFilter(this.defaultFilterValue);
-    
-    // Watch filter changes (optional)
+ 
+    this.applyScaleParams(this.defaultScaleValue);
+
+    // Watch filter changes 
     this.subscriptions.add(
       this.filterForm.get('selectedTimeFilter')?.valueChanges.subscribe(value => {
         this.applyTimeFilter(value);
-
         // Only load production if a field is selected
         if (this.selectedField) {
           this.loadFieldProduction();
         }
+      })
+    );
+
+    // Watch for scale changes 
+    this.subscriptions.add(
+      this.filterForm.get('selectedScale')?.valueChanges.subscribe(value => {
+        this.applyScaleParams(value);
       })
     );
 
@@ -160,7 +172,6 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         //That ensures the input binding [prod]="fieldProduction" actually detects a change and triggers ngOnChanges() in the child.
         this.fieldProduction = [...(data || [])];
         this.loading = false;
-        // console.log('Field production loaded:', data);
       },
       error: (error) => {
         console.error(error);
@@ -168,6 +179,12 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+
+
+  applyScaleParams(selectedScale: string) {
+    const type: 'linear' | 'log' = selectedScale === 'Log' ? 'log' : 'linear';
+    this.appState.setYAxisType(type); 
   }
 
   applyTimeFilter(filter: string) {
@@ -218,12 +235,11 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
 
 
   onSelectedPoints(points: any[]) {
-    //console.log('Selected points:', points);
     this.hakConnectionsService.getRegressionStatistics(points)
       .subscribe({
         next: (result) => {
           this.regressionStats = result;
-          console.log(result)
+          console.log(result);
         },
         error: (err) => console.error('Regression API error', err)
       }); 

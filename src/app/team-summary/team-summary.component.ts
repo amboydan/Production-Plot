@@ -88,7 +88,6 @@ export class TeamSummaryComponent implements OnInit {
         this.wellAPIs = data.map((s: { api: string }) => s.api);
         this.appState.setWells(data);
         this.loading = false;
-        console.log('Field wells loaded:', this.wellAPIs);
       },
       error: (error) => {
         console.error(error);

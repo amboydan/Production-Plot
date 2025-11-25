@@ -21,6 +21,13 @@ import { Subscription } from 'rxjs';
 
 declare var Plotly: any;
 
+// ---- Plotly Runtime Element Type ----
+type PlotlyHTMLElement = HTMLDivElement & {
+  data: any[];
+  layout: any;
+  on: (...args: any[]) => void;
+};
+
 @Component({
   selector: 'app-field-prod-plotly',
   standalone: true,
@@ -38,16 +45,22 @@ export class FieldProdPlotlyComponent
   @Input() dragmode: 'select' | 'lasso' | 'zoom' = 'select';
   @Output() selectionChanged = new EventEmitter<any[]>();
 
+  @Input() yAxisType: 'linear' | 'log' = 'log';
+  @Input() yAxisTickFormat: ',.0f' | ',.0f' = ',.0f';
+
   @ViewChild('plotContainer', { static: true })
   plotContainer!: ElementRef<HTMLDivElement>;
 
   selectedField = '';
+  selectedScale = '';
+
   private layout: Partial<Layout> = getPlotlyLayout();
   private config: Partial<Config> = {
     responsive: true,
     displaylogo: false,
     scrollZoom: true,
   };
+
   private colorMap = colorMap;
   private legendNameMap = legendNameMap;
 
@@ -55,23 +68,42 @@ export class FieldProdPlotlyComponent
   plotReady = false;
 
   private fieldSub?: Subscription;
+  private scaleSub?: Subscription;
 
   constructor(
     private ngZone: NgZone,
-    private fieldSelectionService: AppStateService,
+    private appStateService: AppStateService,
     private truncate: TruncateAfterDashPipe
   ) {}
 
+  //-----------------------------------------------------
+  // LIFECYCLE
+  //-----------------------------------------------------
+
   ngOnInit(): void {
-    // Subscribe once to field selection
-    this.fieldSub = this.fieldSelectionService.selectedField$.subscribe(field => {
+    // Subscribe to selected field
+    this.fieldSub = this.appStateService.selectedField$.subscribe(field => {
       this.selectedField = field ?? '';
       this.updatePlotTitle();
+    });
+
+    // Subscribe to Y-axis type changes
+    this.scaleSub = this.appStateService.yAxisType$.subscribe(type => {
+      if (!type) return;
+      this.selectedScale = type;
+      this.yAxisType = type as 'linear' | 'log';
+
+      if (this.initialized) {
+        this.updateYAxisType();
+      } else if (this.prod?.length) {
+        this.renderOrUpdatePlot();
+      }
     });
   }
 
   ngOnDestroy(): void {
     this.fieldSub?.unsubscribe();
+    this.scaleSub?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -80,27 +112,40 @@ export class FieldProdPlotlyComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['prod'] && this.prod?.length) {
-      this.plotReady = false; // show spinner
+      this.plotReady = false;
       this.renderOrUpdatePlot();
     }
   }
 
-  /** Handles initial render and updates */
+  //-----------------------------------------------------
+  // PLOT RENDER / UPDATE
+  //-----------------------------------------------------
+
   private renderOrUpdatePlot(): void {
-    const graphDiv = this.plotContainer.nativeElement as any;
+    const graphDiv = this.plotContainer.nativeElement as PlotlyHTMLElement;
     const traces = this.buildTraces();
-    const layoutWithDragmode = { ...this.layout, dragmode: this.dragmode };
+
+    const layoutWithDragmode: Partial<Layout> = {
+      ...this.layout,
+      dragmode: this.dragmode,
+      yaxis: {
+        ...this.layout.yaxis,
+        type: this.yAxisType,
+        tickformat: this.yAxisType === 'log' ? ',.0f' : ',.0f'
+      }
+    };
 
     if (!this.initialized) {
-      // Initial render
+      // First-time plot
       Plotly.newPlot(graphDiv, traces, layoutWithDragmode, this.config).then(() => {
         this.ngZone.run(() => (this.plotReady = true));
         this.attachSelectionListener(graphDiv);
       });
       this.initialized = true;
     } else {
-      // Update plot
+      // Update traces while keeping user zoom/pan
       const existingTraceNames = graphDiv.data.map((t: any) => t.name);
+
       const mergedTraces = traces.map((trace) => {
         const index = existingTraceNames.indexOf(trace.name);
         return index !== -1
@@ -127,13 +172,26 @@ export class FieldProdPlotlyComponent
       };
 
       Plotly.react(graphDiv, mergedTraces, newLayout, this.config);
-
-      // Minimal spinner duration
-      setTimeout(() => this.ngZone.run(() => (this.plotReady = true)), 500);
+      setTimeout(() => this.ngZone.run(() => (this.plotReady = true)), 400);
     }
   }
 
-  /** Build Plotly traces from prod array */
+  private updateYAxisType(): void {
+    const graphDiv = this.plotContainer.nativeElement as PlotlyHTMLElement;
+    Plotly.relayout(graphDiv, {
+      'yaxis.type': this.yAxisType,
+      'yaxis.tickformat': this.yAxisType === 'log' ? ',.0f' : ',.0f',
+      //'yaxis.autorange': true,
+      'yaxis.dtick': this.yAxisType === 'log' ? 1 : undefined,
+      'yaxis.tickvals': undefined,
+      'yaxis.tickmode': 'auto'
+    });
+  }
+
+  //-----------------------------------------------------
+  // TRACE BUILDER
+  //-----------------------------------------------------
+
   private buildTraces(): Data[] {
     if (!this.prod?.length) return [];
 
@@ -146,45 +204,35 @@ export class FieldProdPlotlyComponent
       type: 'scatter',
       mode: 'lines+markers',
       name: this.legendNameMap[name],
-      line: { 
+      line: {
         color: this.colorMap[name] || 'black',
-        size: 1
+        width: 1
       },
-      marker: { 
+      marker: {
         size: 8,
         color: this.colorMap[name] || 'black',
         opacity: 1
       },
       selected: {
-        marker: { 
-          size: 12,
-          color: this.colorMap[name] || 'black',
-          opacity: 1
-        }
+        marker: { size: 12, color: this.colorMap[name] || 'black', opacity: 1 }
       },
       unselected: {
-        marker: { 
-          size: 8,
-          color: this.colorMap[name] || 'black',
-          opacity: 0.2 
-        }
+        marker: { size: 8, color: this.colorMap[name] || 'black', opacity: 0.2 }
       }
     }));
   }
 
-  /** Attach selection listener */
-  private attachSelectionListener(graphDiv: any) {
+  //-----------------------------------------------------
+  // SELECTION HANDLING
+  //-----------------------------------------------------
+
+  private attachSelectionListener(graphDiv: PlotlyHTMLElement) {
     setTimeout(() => {
-      if (typeof graphDiv.on === 'function') {
-        graphDiv.on('plotly_selected', (eventData: any) => this.handleSelection(eventData));
-        graphDiv.on('plotly_deselect', () => this.ngZone.run(() => this.selectionChanged.emit([])));
-      } else {
-        console.warn('Plotly graphDiv.on() is not available!');
-      }
+      graphDiv.on('plotly_selected', (eventData: any) => this.handleSelection(eventData));
+      graphDiv.on('plotly_deselect', () => this.ngZone.run(() => this.selectionChanged.emit([])));
     }, 0);
   }
 
-  /** Handle selection and emit a deep-cloned fresh array */
   private handleSelection(eventData: any) {
     const points = (eventData?.points || []).map((pt: any) => ({
       x: pt.x,
@@ -193,14 +241,19 @@ export class FieldProdPlotlyComponent
       pointIndex: pt.pointIndex,
     }));
 
-    // Deep clone to avoid reference reuse
     setTimeout(() => {
-      this.ngZone.run(() => this.selectionChanged.emit(JSON.parse(JSON.stringify(points))));
+      this.ngZone.run(() =>
+        this.selectionChanged.emit(JSON.parse(JSON.stringify(points)))
+      );
     }, 0);
   }
 
-  private updatePlotTitle() {
-    this.layout.title = { 
+  //-----------------------------------------------------
+  // TITLE UPDATE
+  //-----------------------------------------------------
+
+  private updatePlotTitle(): void {
+    this.layout.title = {
       text: `Production Plot: ${this.truncate.transform(this.selectedField)}`,
       font: {
         family: 'Ariel Black',
@@ -211,11 +264,8 @@ export class FieldProdPlotlyComponent
     };
 
     if (this.initialized) {
-      const graphDiv = this.plotContainer.nativeElement as any;
-
-      Plotly.relayout(graphDiv, {
-        title: this.layout.title
-      });
+      const graphDiv = this.plotContainer.nativeElement as PlotlyHTMLElement;
+      Plotly.relayout(graphDiv, { title: this.layout.title });
     }
   }
 }

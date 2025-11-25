@@ -38,6 +38,8 @@ export function getPlotlyLayout(): Partial<Layout> {
       type: 'log',
       tickformat: ',.0f',
       dtick: 1,
+      tickvals: undefined,
+      tickmode: 'auto',
       ticklen: 5,
       showline: true,
       showgrid: true,

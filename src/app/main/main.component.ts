@@ -85,6 +85,7 @@ export class MainComponent implements OnInit {
   onTeamSelect(team: string) {
     this.appState.setSelectedTeam(team);
     this.appState.setSelectedField(null);
+    this.loadFields(team);
     this.router.navigate(['/teamOverview', team]);
   }
 

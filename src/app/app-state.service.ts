@@ -50,4 +50,12 @@ export class AppStateService {
   get currentWells(): any[] {
     return this.fieldsSource.value;
   }
+
+  private yAxisTypeSubject = new BehaviorSubject<'linear' | 'log'>('log');
+  yAxisType$ = this.yAxisTypeSubject.asObservable();
+
+  setYAxisType(value: 'linear' | 'log') {
+    this.yAxisTypeSubject.next(value);
+  }
+  
 }
