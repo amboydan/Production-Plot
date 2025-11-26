@@ -15,6 +15,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TruncateAfterDashPipe } from '../truncate-after-dash.pipe';
+import { FieldDataTable } from '../field-statistics-table/helpers/data-models';
+
 import {
   trigger, 
   state,
@@ -24,6 +26,7 @@ import {
 } from '@angular/animations';
 import { MatFormField, MatLabel, MatHint } from "@angular/material/form-field";
 import {MatInputModule} from '@angular/material/input';
+import { FieldStatisticsTableComponent } from "../field-statistics-table/field-statistics-table.component";
 
 @Component({
   selector: 'app-field-summary',
@@ -31,7 +34,8 @@ import {MatInputModule} from '@angular/material/input';
   imports: [
     CommonModule, MatToolbarModule, MatButtonToggleModule, MatIconModule, MatDatepickerModule,
     AsyncPipe, ReactiveFormsModule, MatTableModule, MatCheckboxModule, MatGridListModule,
-    FieldProdPlotlyComponent, MatInputModule,  FormsModule, TruncateAfterDashPipe
+    FieldProdPlotlyComponent, MatInputModule, FormsModule, TruncateAfterDashPipe,
+    FieldStatisticsTableComponent
 ],
   templateUrl: './field-summary.component.html',
   styleUrls: ['./field-summary.component.scss'],
@@ -60,7 +64,7 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
 
   startDate: string | null = null;
   stopDate: string | null = null;
-  regressionStats: any = null;
+  regressionStats: FieldDataTable | undefined;
 
   filterForm!: FormGroup;
   defaultFilterValue = 'Year';
@@ -239,9 +243,35 @@ export class FieldSummaryComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this.regressionStats = result;
-          console.log(result);
+          console.log(this.regressionStats?.basic_stats[0])
         },
         error: (err) => console.error('Regression API error', err)
       }); 
   }
+
+  get hasValidStats(): boolean {
+    const stats = this.regressionStats?.basic_stats;
+    
+    // If stats is missing or not an array, return false
+    if (!Array.isArray(stats)) return false;
+
+    // If stats is ["No data!"] (string array), return false
+    if (stats.length === 1 && typeof stats[0] === 'string' && stats[0] === "No data!") {
+      return false;
+    }
+
+    // Otherwise assume valid
+    return true;
+  }
+
+  // Dynamic rowspan for top tile
+  get prodTileRowspan(): number {
+    return this.hasValidStats ? 6 : 7; // shrink if table exists
+  }
+
+  // Dynamic rowspan for stats tile
+  get statsTileRowspan(): number {
+    return this.hasValidStats ? 2 : 0;
+  }
+
 }

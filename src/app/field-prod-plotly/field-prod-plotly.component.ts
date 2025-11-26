@@ -166,6 +166,7 @@ export class FieldProdPlotlyComponent
         },
         yaxis: {
           ...this.layout.yaxis,
+          type: this.yAxisType,
           autorange: !userAdjustedY,
           range: userAdjustedY ? graphDiv.layout?.yaxis?.range : undefined,
         },
@@ -178,6 +179,7 @@ export class FieldProdPlotlyComponent
 
   private updateYAxisType(): void {
     const graphDiv = this.plotContainer.nativeElement as PlotlyHTMLElement;
+    
     Plotly.relayout(graphDiv, {
       'yaxis.type': this.yAxisType,
       'yaxis.tickformat': this.yAxisType === 'log' ? ',.0f' : ',.0f',

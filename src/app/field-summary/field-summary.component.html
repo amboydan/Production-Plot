@@ -24,9 +24,17 @@
     </mat-toolbar>
 </form>
 
-<mat-grid-list cols="1" rowHeight="900" gutterSize="10px">
-  <mat-grid-tile>
-    <app-field-prod-plotly dragmode="zoom" (selectionChanged)="onSelectedPoints($event)" [prod]="fieldProduction"></app-field-prod-plotly>
+<mat-grid-list cols="1" rowHeight="100px" gutterSize="10px">
+  <mat-grid-tile [rowspan]="prodTileRowspan">
+    <app-field-prod-plotly 
+      dragmode="zoom" 
+      (selectionChanged)="onSelectedPoints($event)" 
+      [prod]="fieldProduction"></app-field-prod-plotly>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="hasValidStats" [rowspan]="statsTileRowspan">
+    <app-field-statistics-table
+      [stats]="regressionStats">
+    </app-field-statistics-table>
   </mat-grid-tile>
 </mat-grid-list>
 

@@ -4,7 +4,7 @@ import { AppStateService } from '../../app-state.service';
 export function getPlotlyLayout(): Partial<Layout> {
 
   return {
-    height: 1000,
+    height: 780,
     autosize: true,
     xaxis: {
       title: {
@@ -96,7 +96,7 @@ export function getPlotlyLayout(): Partial<Layout> {
     margin: {
       l: 250,
       r: 150,
-      b: 270,
+      b: 200,
       t: 100,
       pad: 0
     },

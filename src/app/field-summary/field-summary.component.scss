@@ -7,3 +7,7 @@
   // optional: add padding/margin around the whole grid
   margin: 0;
 }
+
+.mat-grid-tile > div {
+  transition: height 0.3s ease;
+}

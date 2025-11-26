@@ -13,7 +13,7 @@
     transition: box-shadow 0.3s, transform 0.3s;
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(4, 59, 238, 0.486); // higher elevation
+    box-shadow: 0 10px 30px rgba(10, 238, 13, 0.486); // higher elevation
     transform: translateY(-4px); // subtle lift
   }
   }
